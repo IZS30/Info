@@ -1,250 +1,380 @@
-import React, { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hilfe-Portal — DE / AR</title>
+  <style>
+    :root{
+      --bg-black:#000;
+      --accent-green:#0f3d2e;
+      --white: #fff;
+      --border-black:#000;
+    }
+    /* Grund */
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      min-height:100%;
+      background-color:var(--bg-black);
+      /* Sternenhimmel: gleichmäßige weiße Punkte */
+      background-image:
+        radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,0.6) 0.6px, transparent 0.6px);
+      background-size:20px 20px, 40px 40px;
+      background-position: 0 0, 10px 20px;
+      color:var(--white);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
 
-// ----------------------------------------------
-// Zwei­sprachige Hilfe-Website (DE / AR) – überarbeitet
-// Verhalten geändert: Wenn eine Sprache gewählt wird, erscheinen
-// alle Themen und die Info-Fenster **nur** in dieser Sprache.
-// - Home: DE & AR CTA
-// - Topics-Komponente: wiederverwendbar für DE und AR
-// - Modal zeigt nur Inhalte der gewählten Sprache
-// ----------------------------------------------
+    /* Zentrierter Container */
+    .center {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      box-sizing:border-box;
+      text-align:center;
+      flex-direction:column;
+    }
 
-const topics = [
-  {
-    id: 1,
-    titleDE: "Thema 1",
-    titleAR: "الموضوع الأول",
-    infoDE: "Dies ist ein Beispieltext für Thema 1. Hier können später echte Inhalte eingefügt werden.",
-    infoAR: "هذا نص مثال للموضوع الأول. يمكن إضافة محتوى حقيقي لاحقاً.",
-  },
-  {
-    id: 2,
-    titleDE: "Thema 2",
-    titleAR: "الموضوع الثاني",
-    infoDE: "Beispielinhalt für Thema 2.",
-    infoAR: "محتوى مثالي للموضوع الثاني.",
-  },
-  {
-    id: 3,
-    titleDE: "Thema 3",
-    titleAR: "الموضوع الثالث",
-    infoDE: "Beispielinhalt für Thema 3.",
-    infoAR: "محتوى مثالي للموضوع الثالث.",
-  },
-  {
-    id: 4,
-    titleDE: "Thema 4",
-    titleAR: "الموضوع الرابع",
-    infoDE: "Beispielinhalt für Thema 4.",
-    infoAR: "محتوى مثالي للموضوع الرابع.",
-  },
-  {
-    id: 5,
-    titleDE: "Thema 5",
-    titleAR: "الموضوع الخامس",
-    infoDE: "Beispielinhalt für Thema 5.",
-    infoAR: "محتوى مثالي للموضوع الخامس.",
-  },
-];
+    h1.title{
+      font-size:clamp(28px,6vw,56px);
+      margin:0 0 18px 0;
+      letter-spacing:0.5px;
+      font-weight:700;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
 
-function useStarBackground() {
-  return useMemo(() => {
-    const dotSize = 1; // px
-    const gap = 20; // px
-    const color = "rgba(255,255,255,0.9)";
-    const bg = `radial-gradient(${color} ${dotSize}px, transparent ${dotSize + 0.1}px)`;
-    const size = `${gap}px ${gap}px`;
-    return { backgroundImage: bg, backgroundSize: size, backgroundColor: "#000" };
-  }, []);
-}
+    .cta-block{max-width:760px;width:100%;}
 
-const Modal = ({ open, onClose, topic, lang }) => {
-  if (!topic) return null;
-  const isAR = lang === "ar";
-  const title = isAR ? topic.titleAR : topic.titleDE;
-  const info = isAR ? topic.infoAR : topic.infoDE;
+    .cta {
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:center;
+      margin:18px 0;
+      flex-direction:column;
+    }
 
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-          <motion.div
-            className="relative max-w-lg w-full rounded-2xl shadow-2xl p-6"
-            style={{ backgroundColor: "#0f3d2e", border: "3px solid #000" }}
-            initial={{ scale: 0.9, y: 20, opacity: 0 }}
-            animate={{ scale: 1, y: 0, opacity: 1 }}
-            exit={{ scale: 0.95, opacity: 0 }}
-          >
-            <button
-              onClick={onClose}
-              className="absolute -top-3 -right-3 bg-white text-black rounded-full p-2 shadow"
-              aria-label="Schließen"
-            >
-              <X className="h-4 w-4" />
-            </button>
+    .cta p{
+      margin:0;
+      font-size:18px;
+    }
 
-            <div className="space-y-4 text-white" dir={isAR ? "rtl" : "ltr"}>
-              <h3 className="text-xl font-semibold">{title}</h3>
-              <p className="text-sm opacity-90 leading-relaxed text-{isAR ? 'right' : 'left'}">{info}</p>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-};
+    /* runder Button */
+    .btn-circle{
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      transition: transform .15s ease, box-shadow .15s;
+      font-size:16px;
+    }
+    .btn-circle:active{ transform: scale(.98); }
+    .btn-circle:hover{ transform: scale(1.04); }
 
-export default function App() {
-  const stars = useStarBackground();
-  const [view, setView] = useState("home"); // 'home' | 'ar' | 'de'
-  const [activeTopic, setActiveTopic] = useState(null);
-  const [activeLang, setActiveLang] = useState(null); // 'ar' or 'de'
+    /* Topics-Ansicht */
+    .topics-wrap{
+      width:100%;
+      max-width:760px;
+      height:460px;
+      position:relative;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
 
-  const openLanguage = (lang) => {
-    setActiveLang(lang);
-    setView(lang === "ar" ? "ar" : "de");
-  };
+    .topic-circle{
+      position:absolute;
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:10px;
+      box-sizing:border-box;
+      font-weight:600;
+      cursor:pointer;
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
+    }
+    .topic-circle:hover{ transform: scale(1.06); z-index:30; }
 
-  return (
-    <div className="min-h-screen w-full" style={stars}>
-      {view === "home" && <Home onSelect={openLanguage} />}
+    /* Back button */
+    .topbar{
+      width:100%;
+      max-width:760px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:14px;
+      padding:0 6px;
+      box-sizing:border-box;
+    }
+    .link-back{
+      color:var(--white);
+      text-decoration:underline;
+      cursor:pointer;
+      font-size:14px;
+      background:transparent;
+      border:none;
+      padding:6px;
+    }
 
-      {view === "ar" && (
-        <Topics
-          topics={topics}
-          lang="ar"
-          onBack={() => {
-            setView("home");
-            setActiveLang(null);
-            setActiveTopic(null);
-          }}
-          onOpenTopic={(t) => setActiveTopic(t)}
-        />
-      )}
+    /* Modal */
+    .modal-overlay{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;
+      background:rgba(0,0,0,0.6);
+    }
+    .modal{
+      width:100%;
+      max-width:720px;
+      border-radius:16px;
+      padding:20px;
+      box-sizing:border-box;
+      background:var(--accent-green);
+      border:3px solid var(--border-black);
+      color:var(--white);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(8px) scale(.98);
+      opacity:0;
+      transition: all 200ms ease;
+    }
+    .modal.open{ transform:translateY(0) scale(1); opacity:1; }
+    .modal h3{ margin:0 0 10px 0; font-size:20px; }
+    .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
 
-      {view === "de" && (
-        <Topics
-          topics={topics}
-          lang="de"
-          onBack={() => {
-            setView("home");
-            setActiveLang(null);
-            setActiveTopic(null);
-          }}
-          onOpenTopic={(t) => setActiveTopic(t)}
-        />
-      )}
+    .modal-close{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:36px;height:36px;border-radius:999px;
+      background:var(--white);
+      color:var(--border-black);
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;font-weight:700;
+      box-shadow:0 6px 14px rgba(0,0,0,0.5);
+    }
 
-      <Modal open={!!activeTopic} onClose={() => setActiveTopic(null)} topic={activeTopic} lang={activeLang} />
-    </div>
-  );
-}
+    /* Footer small */
+    footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:12px; }
 
-function Home({ onSelect }) {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center px-6">
-      <header className="mb-10">
-        <h1 className="text-white text-3xl md:text-5xl font-bold drop-shadow">Willkommen</h1>
-      </header>
-      <div className="space-y-8 max-w-xl w-full">
-        {/* Deutsch CTA */}
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-white text-lg md:text-xl">Brauchst du Hilfe auf <span className="font-semibold">Deutsch</span>? – hier klicken</p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSelect("de")}
-            className="rounded-full px-8 py-8 text-white shadow-2xl"
-            style={{ backgroundColor: "#0f3d2e", border: "3px solid #000" }}
-          >
-            hier klicken
-          </motion.button>
+    /* Kleine responsive Anpassung */
+    @media (max-width:540px){
+      .btn-circle{ width:96px;height:96px;font-size:14px; }
+      .topic-circle{ width:96px;height:96px;font-size:14px; }
+      .topics-wrap{ height:340px; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app" class="center" aria-live="polite">
+    <!-- HOME -->
+    <section id="homeView" class="center" style="display:flex;">
+      <div class="cta-block">
+        <h1 class="title">Brauchst du Hilfe?</h1>
+
+        <div class="cta">
+          <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
+          <button id="btn-de" class="btn-circle" type="button" aria-label="Deutsch wählen">hier klicken</button>
         </div>
 
-        {/* Arabisch CTA */}
-        <div className="flex flex-col items-center gap-4" dir="rtl">
-          <p className="text-white text-lg md:text-xl">
-            هل تحتاج إلى مساعدة باللغة <span className="font-semibold">الألمانية</span>? – اضغط هنا
-          </p>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSelect("ar")}
-            className="rounded-full px-8 py-8 text-white shadow-2xl"
-            style={{ backgroundColor: "#0f3d2e", border: "3px solid #000" }}
-          >
-            اضغط هنا
-          </motion.button>
+        <div class="cta" style="margin-top:14px;" dir="rtl">
+          <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+          <button id="btn-ar" class="btn-circle" type="button" aria-label="Arabisch wählen">اضغط هنا</button>
         </div>
       </div>
-      <footer className="mt-12 text-white/60 text-xs">© {new Date().getFullYear()} – Hilfe-Portal</footer>
-    </div>
-  );
-}
 
-function Topics({ topics, lang, onBack, onOpenTopic }) {
-  const radius = 160; // px
-  const center = { x: 0, y: 0 };
-  const positions = topics.map((_, i) => {
-    const angle = (i / topics.length) * Math.PI * 2 - Math.PI / 2;
-    return {
-      x: center.x + radius * Math.cos(angle),
-      y: center.y + radius * Math.sin(angle),
-    };
-  });
+      <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+    </section>
 
-  const isAR = lang === "ar";
-
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-3xl flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-white underline">← Zurück</button>
-        <h2 className="text-white text-2xl font-semibold">{isAR ? "اختر موضوعاً" : "Themenübersicht"}</h2>
-        <div className="w-16" />
+    <!-- TOPICS (wird angezeigt, wenn Sprache gewählt) -->
+    <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+      <div class="topbar">
+        <button id="backBtn" class="link-back">← Zurück</button>
+        <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+        <div style="width:48px;"></div>
       </div>
 
-      <div className="relative w-full max-w-2xl h-[440px] mx-auto flex items-center justify-center">
-        <motion.div
-          className="absolute rounded-full"
-          style={{ width: 40, height: 40, border: "3px solid #0f3d2e" }}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-        />
+      <div class="topics-wrap" id="topicsWrap" aria-live="polite"></div>
 
-        {topics.map((t, i) => (
-          <motion.button
-            key={t.id}
-            onClick={() => onOpenTopic(t)}
-            className="absolute rounded-full text-white font-medium shadow-2xl"
-            style={{
-              width: 120,
-              height: 120,
-              left: `calc(50% + ${positions[i].x}px - 60px)`,
-              top: `calc(50% + ${positions[i].y}px - 60px)`,
-              backgroundColor: "#0f3d2e",
-              border: "3px solid #000",
-            }}
-            initial={{ scale: 0.6, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: i * 0.06, type: "spring", stiffness: 200, damping: 18 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <div className={`text-center px-2`} dir={isAR ? "rtl" : "ltr"}>
-              <div className="text-base">{isAR ? t.titleAR : t.titleDE}</div>
-              {isAR ? <div className="text-sm opacity-80">{/* optional subtitle in AR */}</div> : null}
-            </div>
-          </motion.button>
-        ))}
-      </div>
+      <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalOverlay" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div id="modalBox" class="modal" role="document" aria-labelledby="modalTitle">
+      <button id="closeModal" class="modal-close" aria-label="Schließen">✕</button>
+      <h3 id="modalTitle"></h3>
+      <div id="modalContent" style="margin-top:8px;"></div>
     </div>
-  );
-}
+  </div>
+
+  <script>
+    // --- Daten (Themen) ---
+    const topics = [
+      { id:1, deTitle:"Thema 1", arTitle:"الموضوع الأول", deInfo:"Dies ist ein Beispieltext für Thema 1. Hier können später echte Inhalte eingefügt werden.", arInfo:"هذا نص مثالي للموضوع الأول. يمكن إضافة محتوى حقيقي هنا لاحقاً." },
+      { id:2, deTitle:"Thema 2", arTitle:"الموضوع الثاني", deInfo:"Beispielinhalt für Thema 2.", arInfo:"محتوى مثالي للموضوع الثاني." },
+      { id:3, deTitle:"Thema 3", arTitle:"الموضوع الثالث", deInfo:"Beispielinhalt für Thema 3.", arInfo:"محتوى مثالي للموضوع الثالث." },
+      { id:4, deTitle:"Thema 4", arTitle:"الموضوع الرابع", deInfo:"Beispielinhalt für Thema 4.", arInfo:"محتوى مثالي للموضوع الرابع." },
+      { id:5, deTitle:"Thema 5", arTitle:"الموضوع الخامس", deInfo:"Beispielinhalt für Thema 5.", arInfo:"محتوى مثالي للموضوع الخامس." }
+    ];
+
+    // --- Elemente ---
+    const homeView = document.getElementById('homeView');
+    const topicsView = document.getElementById('topicsView');
+    const topicsWrap = document.getElementById('topicsWrap');
+    const topicsTitle = document.getElementById('topicsTitle');
+    const backBtn = document.getElementById('backBtn');
+    const yearSpan = document.getElementById('year');
+
+    const btnDe = document.getElementById('btn-de');
+    const btnAr = document.getElementById('btn-ar');
+
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBox = document.getElementById('modalBox');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
+
+    let currentLang = null; // 'de' or 'ar'
+
+    // Set year
+    yearSpan.textContent = new Date().getFullYear();
+
+    // --- Event: Sprache wählen ---
+    btnDe.addEventListener('click', () => openTopics('de'));
+    btnAr.addEventListener('click', () => openTopics('ar'));
+
+    backBtn.addEventListener('click', () => {
+      closeModalIfOpen();
+      topicsView.style.display = 'none';
+      homeView.style.display = 'flex';
+      document.documentElement.lang = 'de';
+      currentLang = null;
+      topicsWrap.innerHTML = '';
+    });
+
+    // --- Modal-Funktionen ---
+    function openModal(topic) {
+      const isAR = currentLang === 'ar';
+      modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
+      modalContent.innerHTML = isAR
+        ? `<p dir="rtl">${escapeHtml(topic.arInfo)}</p>`
+        : `<p>${escapeHtml(topic.deInfo)}</p>`;
+      modalOverlay.style.display = 'flex';
+      // force reflow then open class for animation
+      requestAnimationFrame(()=> modalBox.classList.add('open'));
+      modalOverlay.setAttribute('aria-hidden','false');
+      // focus management
+      closeModal.focus();
+    }
+
+    function closeModalIfOpen() {
+      if (modalOverlay.style.display === 'flex') {
+        modalBox.classList.remove('open');
+        setTimeout(()=> {
+          modalOverlay.style.display = 'none';
+          modalOverlay.setAttribute('aria-hidden','true');
+          modalTitle.textContent = '';
+          modalContent.innerHTML = '';
+        }, 180);
+      }
+    }
+
+    closeModal.addEventListener('click', closeModalIfOpen);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModalIfOpen();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModalIfOpen();
+    });
+
+    // --- Anzeige Topics ---
+    function openTopics(lang){
+      currentLang = lang;
+      homeView.style.display = 'none';
+      topicsView.style.display = 'block';
+      // set title and dir
+      if (lang === 'ar') {
+        topicsTitle.textContent = 'اختر موضوعاً';
+        topicsTitle.style.direction = 'rtl';
+        topicsWrap.setAttribute('dir','rtl');
+        document.documentElement.lang = 'ar';
+      } else {
+        topicsTitle.textContent = 'Themenübersicht';
+        topicsTitle.style.direction = 'ltr';
+        topicsWrap.setAttribute('dir','ltr');
+        document.documentElement.lang = 'de';
+      }
+      renderTopicCircles();
+    }
+
+    function renderTopicCircles(){
+      topicsWrap.innerHTML = ''; // clear
+
+      // container dimensions
+      const rect = topicsWrap.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      const centerX = cw/2;
+      const centerY = ch/2;
+      const radius = Math.min(cw, ch) * 0.33; // ring radius
+      const circleR = 60; // half of 120px
+
+      topics.forEach((t,i) => {
+        const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+
+        const btn = document.createElement('button');
+        btn.className = 'topic-circle';
+        btn.type = 'button';
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
+        btn.style.transform = 'translate(-50%,-50%)';
+        btn.setAttribute('aria-label', (currentLang==='ar' ? t.arTitle : t.deTitle));
+        // content
+        if (currentLang === 'ar') {
+          btn.innerHTML = `<div style="direction:rtl">${t.arTitle}</div>`;
+        } else {
+          btn.innerHTML = `<div>${t.deTitle}</div>`;
+        }
+        btn.addEventListener('click', ()=> openModal(t));
+        topicsWrap.appendChild(btn);
+      });
+
+      // re-render on resize for better positions
+      // debounce
+      let to = null;
+      window.addEventListener('resize', () => {
+        clearTimeout(to);
+        to = setTimeout(renderTopicCircles, 120);
+      }, {once:true});
+    }
+
+    // small helper to prevent XSS (safe for this local file)
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+    }
+  </script>
+</body>
+</html>
