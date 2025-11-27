@@ -1,135 +1,374 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infos</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hilfe-Portal — DE / AR</title>
   <style>
-    body { font-family: Arial, sans-serif; background:#f8f8f8; margin:0; padding:20px; }
-    .topic-box { background:white; padding:15px; border-radius:10px; margin-bottom:10px; cursor:pointer; border:1px solid #ddd; }
-    .topic-box:hover { background:#eef; }
-
-    /* Modal */
-    #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); 
-             align-items:center; justify-content:center; }
-    #modalContentBox {
-      background:white; padding:20px; border-radius:10px; width:90%; max-width:450px;
-      max-height:80vh; overflow-y:auto; line-height:1.6;
+    :root{
+      --bg-black:#000;
+      --accent-green:#0f3d2e;
+      --white: #fff;
+      --border-black:#000;
     }
-    #closeBtn { float:right; cursor:pointer; font-size:20px; }
+    /* Grund */
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{
+      min-height:100%;
+      background-color:var(--bg-black);
+      background-image:
+        radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,0.6) 0.6px, transparent 0.6px);
+      background-size:20px 20px, 40px 40px;
+      background-position: 0 0, 10px 20px;
+      color:var(--white);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .center {
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      box-sizing:border-box;
+      text-align:center;
+      flex-direction:column;
+    }
+
+    h1.title{
+      font-size:clamp(28px,6vw,56px);
+      margin:0 0 18px 0;
+      letter-spacing:0.5px;
+      font-weight:700;
+      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    .cta-block{max-width:760px;width:100%;}
+
+    .cta {
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:center;
+      margin:18px 0;
+      flex-direction:column;
+    }
+
+    .cta p{
+      margin:0;
+      font-size:18px;
+    }
+
+    .btn-circle{
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:600;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      transition: transform .15s ease, box-shadow .15s;
+      font-size:16px;
+    }
+    .btn-circle:active{ transform: scale(.98); }
+    .btn-circle:hover{ transform: scale(1.04); }
+
+    .topics-wrap{
+      width:100%;
+      max-width:760px;
+      height:460px;
+      position:relative;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .topic-circle{
+      position:absolute;
+      width:120px;
+      height:120px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:10px;
+      box-sizing:border-box;
+      font-weight:600;
+      cursor:pointer;
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
+    }
+    .topic-circle:hover{ transform: scale(1.06); z-index:30; }
+
+    .topbar{
+      width:100%;
+      max-width:760px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:14px;
+      padding:0 6px;
+      box-sizing:border-box;
+    }
+    .link-back{
+      color:var(--white);
+      text-decoration:underline;
+      cursor:pointer;
+      font-size:14px;
+      background:transparent;
+      border:none;
+      padding:6px;
+    }
+
+    .modal-overlay{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;
+      background:rgba(0,0,0,0.6);
+    }
+    .modal{
+      width:100%;
+      max-width:720px;
+      border-radius:16px;
+      padding:20px;
+      box-sizing:border-box;
+      background:var(--accent-green);
+      border:3px solid var(--border-black);
+      color:var(--white);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(8px) scale(.98);
+      opacity:0;
+      transition: all 200ms ease;
+    }
+    .modal.open{ transform:translateY(0) scale(1); opacity:1; }
+    .modal h3{ margin:0 0 10px 0; font-size:20px; }
+    .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
+
+    .modal-close{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:36px;height:36px;border-radius:999px;
+      background:var(--white);
+      color:var(--border-black);
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;font-weight:700;
+      box-shadow:0 6px 14px rgba(0,0,0,0.5);
+    }
+
+    footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:12px; }
+
+    @media (max-width:540px){
+      .btn-circle{ width:96px;height:96px;font-size:14px; }
+      .topic-circle{ width:96px;height:96px;font-size:14px; }
+      .topics-wrap{ height:340px; }
+    }
   </style>
 </head>
+
 <body>
+  <main id="app" class="center" aria-live="polite">
+    <!-- HOME -->
+    <section id="homeView" class="center" style="display:flex;">
+      <div class="cta-block">
+        <h1 class="title">Brauchst du Hilfe?</h1>
 
-<h2>Informationen</h2>
-<button onclick="toggleLanguage()">Sprache wechseln</button>
+        <div class="cta">
+          <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
+          <button id="btn-de" class="btn-circle">hier klicken</button>
+        </div>
 
-<div id="topics"></div>
+        <div class="cta" style="margin-top:14px;" dir="rtl">
+          <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+          <button id="btn-ar" class="btn-circle">اضغط هنا</button>
+        </div>
+      </div>
 
-<!-- MODAL -->
-<div id="modal" onclick="closeModal(event)">
-  <div id="modalContentBox">
-    <span id="closeBtn" onclick="closeModal(event)">&times;</span>
-    <div id="modal-content"></div>
+      <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+    </section>
+
+    <!-- Themen -->
+    <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+      <div class="topbar">
+        <button id="backBtn" class="link-back">← Zurück</button>
+        <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+        <div style="width:48px;"></div>
+      </div>
+
+      <div class="topics-wrap" id="topicsWrap"></div>
+
+      <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
+    </section>
+  </main>
+
+  <!-- Modal -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div id="modalBox" class="modal">
+      <button id="closeModal" class="modal-close">✕</button>
+      <h3 id="modalTitle"></h3>
+      <div id="modalContent" style="margin-top:8px;"></div>
+    </div>
   </div>
-</div>
 
-<script>
-// -------------------------
-// THEMENLISTE
-// -------------------------
-const topicsData = [
-  { 
-    id:1,
-    deTitle:"Islamische Eheschließung (Nikah)",
-    arTitle:"الزواج الإسلامي (النكاح)",
-    deInfo:"Unterlagen: Erweiterte Meldebescheinigung vom Rathaus, Kopie der Ausweise beider Partner.<br><br>Terminbuchung über diesen QR-Code:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
-    arInfo:"الوثائق المطلوبة: شهادة سكن موسعة من البلدية، نسخ من بطاقات هوية الزوجين.<br><br>لحجز موعد، امسح رمز الـ QR التالي:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />"
-  },
-  { 
-    id:2,
-    deTitle:"Arabisch lernen für Kinder anmelden",
-    arTitle:"تسجيل الأطفال في دروس اللغة العربية",
-    deInfo:"Anmeldung erfolgt direkt im Büro der Moschee oder per Formular.",
-    arInfo:"يتم التسجيل مباشرة في مكتب المسجد أو عبر الاستمارة."
-  },
-  { 
-    id:3,
-    deTitle:"Quran lernen für Kinder anmelden",
-    arTitle:"تسجيل الأطفال في دروس القرآن الكريم",
-    deInfo:"Unterricht findet wöchentlich statt. Anmeldung vor Ort.",
-    arInfo:"الدروس أسبوعية. التسجيل يتم في المسجد."
-  },
-  { 
-    id:4,
-    deTitle:"Vorträge des Imams",
-    arTitle:"محاضرات الإمام",
-    deInfo:"Jeden Sonntag nach Salat al-Asr.",
-    arInfo:"كل يوم أحد بعد صلاة العصر."
-  },
-  { 
-    id:5,
-    deTitle:"Fragen über Islamologie",
-    arTitle:"أسئلة حول الدراسات الإسلامية",
-    deInfo:"Fragen können telefonisch an den Imam gestellt werden oder per E-Mail an: info@iz-stuttgart.de",
-    arInfo:"يمكن طرح الأسئلة على الإمام هاتفيًا أو عبر البريد الإلكتروني: info@iz-stuttgart.de"
-  }
-];
+  <script>
+    const topics = [
+      {
+        id:1,
+        deTitle:"Islamische Eheschließung (Nikah)",
+        arTitle:"الزواج الإسلامي (النكاح)",
+        deInfo:"Unterlagen: Erweiterte Meldebescheinigung vom Rathaus, Kopie der Ausweise beider Partner.<br><br>Termin buchen:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
+        arInfo:"لإجراء عقد الزواج الإسلامي يجب إحضار شهادة السكن الموسعة ونسخ من بطاقات الهوية."
+      },
+      {
+        id:2,
+        deTitle:"Arabisch lernen für Kinder",
+        arTitle:"تعليم اللغة العربية للأطفال",
+        deInfo:"Anmeldung erforderlich.",
+        arInfo:"التسجيل مطلوب."
+      },
+      {
+        id:3,
+        deTitle:"Quran lernen für Kinder",
+        arTitle:"تعليم القرآن الكريم للأطفال",
+        deInfo:"Anmeldung erforderlich.",
+        arInfo:"التسجيل مطلوب."
+      },
+      {
+        id:4,
+        deTitle:"Vorträge des Imams",
+        arTitle:"محاضرات الإمام",
+        deInfo:"Die Vorträge finden sonntags nach dem Salat Al-‘Asr statt.",
+        arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر."
+      },
+      {
+        id:5,
+        deTitle:"Fragen zur Islamologie / Kontakt zum Imam",
+        arTitle:"أسئلة واستفسارات أخرى / تواصل مع الإمام",
+        deInfo:"Email: info@iz-stuttgart.de",
+        arInfo:"البريد الإلكتروني: info@iz-stuttgart.de"
+      }
+    ];
 
-// -------------------------
-// SPRACHE
-// -------------------------
-let currentLang = "de";
+    const homeView = document.getElementById('homeView');
+    const topicsView = document.getElementById('topicsView');
+    const topicsWrap = document.getElementById('topicsWrap');
+    const topicsTitle = document.getElementById('topicsTitle');
+    const backBtn = document.getElementById('backBtn');
+    const yearSpan = document.getElementById('year');
 
-function toggleLanguage() {
-  currentLang = currentLang === "de" ? "ar" : "de";
-  renderTopics();
-}
+    const btnDe = document.getElementById('btn-de');
+    const btnAr = document.getElementById('btn-ar');
 
-// -------------------------
-// THEMEN LADEN
-// -------------------------
-function renderTopics() {
-  const container = document.getElementById("topics");
-  container.innerHTML = "";
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBox = document.getElementById('modalBox');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
 
-  topicsData.forEach(topic => {
-    const box = document.createElement("div");
-    box.className = "topic-box";
-    box.textContent = currentLang === "de" ? topic.deTitle : topic.arTitle;
-    box.onclick = () => openModal(topic);
-    container.appendChild(box);
-  });
-}
+    let currentLang = null;
 
-// -------------------------
-// MODAL
-// -------------------------
-function openModal(topic) {
-  const modal = document.getElementById("modal");
-  const modalContent = document.getElementById("modal-content");
+    yearSpan.textContent = new Date().getFullYear();
 
-  // HTML DIREKT EINSETZEN (WICHTIG!)
-  if (currentLang === "ar") {
-    modalContent.innerHTML = `<div dir="rtl">${topic.arInfo}</div>`;
-  } else {
-    modalContent.innerHTML = `<div>${topic.deInfo}</div>`;
-  }
+    btnDe.addEventListener('click', () => openTopics('de'));
+    btnAr.addEventListener('click', () => openTopics('ar'));
 
-  modal.style.display = "flex";
-}
+    backBtn.addEventListener('click', () => {
+      closeModalIfOpen();
+      topicsView.style.display = 'none';
+      homeView.style.display = 'flex';
+      document.documentElement.lang = 'de';
+      currentLang = null;
+      topicsWrap.innerHTML = '';
+    });
 
-function closeModal(e) {
-  if (e.target.id === "modal" || e.target.id === "closeBtn") {
-    document.getElementById("modal").style.display = "none";
-  }
-}
+    function openModal(topic) {
+      const isAR = currentLang === 'ar';
 
-// -------------------------
-// START
-// -------------------------
-renderTopics();
-</script>
+      modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
+
+      // IMPORTANT: HTML nicht escapen → QR-Code funktioniert
+      modalContent.innerHTML = isAR
+        ? `<div dir="rtl">${topic.arInfo}</div>`
+        : `<div>${topic.deInfo}</div>`;
+
+      modalOverlay.style.display = 'flex';
+      requestAnimationFrame(()=> modalBox.classList.add('open'));
+    }
+
+    function closeModalIfOpen() {
+      if (modalOverlay.style.display === 'flex') {
+        modalBox.classList.remove('open');
+        setTimeout(()=>{
+          modalOverlay.style.display = 'none';
+          modalTitle.textContent = '';
+          modalContent.innerHTML = '';
+        },180);
+      }
+    }
+
+    closeModal.addEventListener('click', closeModalIfOpen);
+    modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) closeModalIfOpen(); });
+
+    function openTopics(lang){
+      currentLang = lang;
+      homeView.style.display = 'none';
+      topicsView.style.display = 'block';
+
+      if (lang === 'ar') {
+        topicsTitle.textContent = 'اختر موضوعاً';
+        topicsWrap.setAttribute('dir','rtl');
+        document.documentElement.lang = 'ar';
+      } else {
+        topicsTitle.textContent = 'Themenübersicht';
+        topicsWrap.setAttribute('dir','ltr');
+        document.documentElement.lang = 'de';
+      }
+
+      renderTopicCircles();
+    }
+
+    function renderTopicCircles(){
+      topicsWrap.innerHTML = '';
+
+      const rect = topicsWrap.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      const centerX = cw/2;
+      const centerY = ch/2;
+      const radius = Math.min(cw, ch) * 0.50;
+
+      topics.forEach((t,i) => {
+        const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+
+        const btn = document.createElement('button');
+        btn.className = 'topic-circle';
+        btn.type = 'button';
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
+        btn.style.transform = 'translate(-50%,-50%)';
+
+        btn.innerHTML = currentLang==='ar'
+          ? `<div style="direction:rtl">${t.arTitle}</div>`
+          : `<div>${t.deTitle}</div>`;
+
+        btn.addEventListener('click', ()=> openModal(t));
+        topicsWrap.appendChild(btn);
+      });
+    }
+  </script>
 
 </body>
 </html>
