@@ -151,6 +151,14 @@
       opacity:0;
       transition: all 200ms ease;
     }
+    /* QR-Code / Bilder im Modal zentrieren */
+    #modalContent img {
+    display: block;       /* macht das Bild zu einem Blockelement */
+    margin: 12px auto;    /* zentriert horizontal */
+    max-width: 80%;       /* optional: passt Bildbreite an Modal an */
+    height: auto;         /* behält das Seitenverhältnis bei */
+    }
+
     .modal.open{ transform:translateY(0) scale(1); opacity:1; }
     .modal h3{ margin:0 0 10px 0; font-size:20px; }
     .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
