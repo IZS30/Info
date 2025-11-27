@@ -225,6 +225,7 @@
       <button id="closeModal" class="modal-close" aria-label="Schließen">✕</button>
       <h3 id="modalTitle"></h3>
       <div id="modalContent" style="margin-top:8px;"></div>
+      <div id="info"></div>
     </div>
   </div>
 
@@ -237,6 +238,7 @@
       { id:4, deTitle:"Vorträge des Imams", arTitle:"محاضرات الإمام", deInfo:"Die Vorträge finden sonntags nach dem Salat Al-‘Asr statt (NUR AUF ARABISCH).", arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر مباشرة." },
       { id:5, deTitle:"Fragen zur Islamologie / Kontakt zum Imam", arTitle:"أسئلة واستفسارات أخرى/ تواصل مع الإمام", deInfo:"Email schreiben: info@iz-stuttgart.de.", arInfo:"ارسل إيميل إلى: info@iz-stuttgart.de" }
     ];
+    
 
     // --- Elemente ---
     const homeView = document.getElementById('homeView');
@@ -245,6 +247,7 @@
     const topicsTitle = document.getElementById('topicsTitle');
     const backBtn = document.getElementById('backBtn');
     const yearSpan = document.getElementById('year');
+    document.getElementById("info").innerHTML = item.deInfo;
 
     const btnDe = document.getElementById('btn-de');
     const btnAr = document.getElementById('btn-ar');
