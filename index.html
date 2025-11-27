@@ -57,4 +57,79 @@ const topicsData = [
     id:3,
     deTitle:"Quran lernen für Kinder anmelden",
     arTitle:"تسجيل الأطفال في دروس القرآن الكريم",
-    deInfo:"Unterricht findet wöchentlich
+    deInfo:"Unterricht findet wöchentlich statt. Anmeldung vor Ort.",
+    arInfo:"الدروس أسبوعية. التسجيل يتم في المسجد."
+  },
+  { 
+    id:4,
+    deTitle:"Vorträge des Imams",
+    arTitle:"محاضرات الإمام",
+    deInfo:"Jeden Sonntag nach Salat al-Asr.",
+    arInfo:"كل يوم أحد بعد صلاة العصر."
+  },
+  { 
+    id:5,
+    deTitle:"Fragen über Islamologie",
+    arTitle:"أسئلة حول الدراسات الإسلامية",
+    deInfo:"Fragen können telefonisch an den Imam gestellt werden oder per E-Mail an: info@iz-stuttgart.de",
+    arInfo:"يمكن طرح الأسئلة على الإمام هاتفيًا أو عبر البريد الإلكتروني: info@iz-stuttgart.de"
+  }
+];
+
+// -------------------------
+// SPRACHE
+// -------------------------
+let currentLang = "de";
+
+function toggleLanguage() {
+  currentLang = currentLang === "de" ? "ar" : "de";
+  renderTopics();
+}
+
+// -------------------------
+// THEMEN LADEN
+// -------------------------
+function renderTopics() {
+  const container = document.getElementById("topics");
+  container.innerHTML = "";
+
+  topicsData.forEach(topic => {
+    const box = document.createElement("div");
+    box.className = "topic-box";
+    box.textContent = currentLang === "de" ? topic.deTitle : topic.arTitle;
+    box.onclick = () => openModal(topic);
+    container.appendChild(box);
+  });
+}
+
+// -------------------------
+// MODAL
+// -------------------------
+function openModal(topic) {
+  const modal = document.getElementById("modal");
+  const modalContent = document.getElementById("modal-content");
+
+  // HTML DIREKT EINSETZEN (WICHTIG!)
+  if (currentLang === "ar") {
+    modalContent.innerHTML = `<div dir="rtl">${topic.arInfo}</div>`;
+  } else {
+    modalContent.innerHTML = `<div>${topic.deInfo}</div>`;
+  }
+
+  modal.style.display = "flex";
+}
+
+function closeModal(e) {
+  if (e.target.id === "modal" || e.target.id === "closeBtn") {
+    document.getElementById("modal").style.display = "none";
+  }
+}
+
+// -------------------------
+// START
+// -------------------------
+renderTopics();
+</script>
+
+</body>
+</html>
