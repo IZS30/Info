@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Hilfe-Portal — DE / AR</title>
-
   <style>
     :root{
       --bg-black:#000;
@@ -12,38 +11,10 @@
       --white: #fff;
       --border-black:#000;
     }
-
-    html,body{
-      height:100%;
-      margin:0;
-      overflow:hidden; /* verhindert Verschieben beim Rotieren */
-      background:black;
-    }
-
-    body {
-      -webkit-text-size-adjust: 100%;
-      touch-action: manipulation;
-    }
-
-    /* ROTATION WRAPPER */
-    #rotateWrap {
-      width:100vw;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transform-origin:center center;
-      transition: transform 0.4s ease, width 0s, height 0s;
-      overflow:hidden;
-    }
-
-    /* ==== DEIN ORIGINALER STYLE BEGINNT AB HIER ==== */
-
-    body, html {
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
-    }
-
+    /* Grund */
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow:hidden;}
     body{
+      min-height:100%;
       background-color:var(--bg-black);
       background-image:
         radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
@@ -52,22 +23,53 @@
       background-position: 0 0, 10px 20px;
       color:var(--white);
       -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* --- ROTATE WRAPPER: keeps layout intact and allows transform around center --- */
+    .rotate-wrapper{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform-origin:center center;
+      transition: transform 0.28s ease;
+      background: transparent;
+      overflow:hidden;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-transform-style: preserve-3d;
+      transform-style: preserve-3d;
+    }
+
+    /* inner container to hold the original content with normal flow */
+    #innerContainer {
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
     .center {
-      min-height:100%;
+      min-height:100vh;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:24px;
-      flex-direction:column;
-      text-align:center;
       box-sizing:border-box;
+      text-align:center;
+      flex-direction:column;
     }
 
     h1.title{
       font-size:clamp(28px,6vw,56px);
       margin:0 0 18px 0;
+      letter-spacing:0.5px;
+      font-weight:700;
       text-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
 
@@ -82,26 +84,37 @@
       flex-direction:column;
     }
 
+    .cta p{
+      margin:0;
+      font-size:18px;
+    }
+
     .btn-circle{
       width:120px;
       height:120px;
       border-radius:999px;
-      display:flex;
+      display:inline-flex;
       align-items:center;
       justify-content:center;
-      background:var(--accent-green);
-      color:white;
-      border:3px solid black;
-      cursor:pointer;
       font-weight:600;
-      transition:transform .15s ease;
+      cursor:pointer;
+      user-select:none;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      transition: transform .15s ease, box-shadow .15s;
+      font-size:16px;
     }
+    .btn-circle:active{ transform: scale(.98); }
+    .btn-circle:hover{ transform: scale(1.04); }
 
     .topics-wrap{
       width:100%;
       max-width:760px;
       height:460px;
       position:relative;
+      margin:0 auto;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -117,13 +130,16 @@
       justify-content:center;
       text-align:center;
       padding:10px;
-      background:var(--accent-green);
-      border:3px solid black;
-      color:white;
+      box-sizing:border-box;
       font-weight:600;
       cursor:pointer;
-      transition:transform .15s ease;
+      border:3px solid var(--border-black);
+      background:var(--accent-green);
+      color:var(--white);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
     }
+    .topic-circle:hover{ transform: scale(1.06); z-index:30; }
 
     .topbar{
       width:100%;
@@ -133,225 +149,355 @@
       align-items:center;
       margin-bottom:14px;
       padding:0 6px;
+      box-sizing:border-box;
+    }
+    .link-back{
+      color:var(--white);
+      text-decoration:underline;
+      cursor:pointer;
+      font-size:14px;
+      background:transparent;
+      border:none;
+      padding:6px;
     }
 
     .modal-overlay{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;
       background:rgba(0,0,0,0.6);
-      z-index:1000;
     }
-
     .modal{
       width:100%;
       max-width:720px;
-      padding:20px;
       border-radius:16px;
+      padding:20px;
+      box-sizing:border-box;
       background:var(--accent-green);
-      border:3px solid black;
-      color:white;
-      transform:scale(.98);
+      border:3px solid var(--border-black);
+      color:var(--white);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(8px) scale(.98);
       opacity:0;
-      transition:all .2s ease;
+      transition: all 200ms ease;
+    }
+    /* QR-Code / Bilder im Modal zentrieren */
+    #modalContent img {
+      display: block;
+      margin: 12px auto;
+      max-width: 80%;
+      height: auto;
     }
 
-    .modal.open{
-      transform:scale(1);
-      opacity:1;
+    .modal.open{ transform:translateY(0) scale(1); opacity:1; }
+    .modal h3{ margin:0 0 10px 0; font-size:20px; }
+    .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
+
+    .modal-close{
+      position:absolute;
+      right:12px;
+      top:12px;
+      width:36px;height:36px;border-radius:999px;
+      background:var(--white);
+      color:var(--border-black);
+      display:inline-flex;align-items:center;justify-content:center;
+      border:none;cursor:pointer;font-weight:700;
+      box-shadow:0 6px 14px rgba(0,0,0,0.5);
     }
 
-    #modalContent img{
-      display:block;
-      margin:12px auto;
-      max-width:80%;
-      height:auto;
+    footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:12px; }
+
+    @media (max-width:540px){
+      .btn-circle{ width:96px;height:96px;font-size:14px; }
+      .topic-circle{ width:96px;height:96px;font-size:14px; }
+      .topics-wrap{ height:340px; }
     }
   </style>
-
 </head>
 
 <body>
+  <!-- rotate wrapper: keeps all original content intact inside -->
+  <div id="rotateWrap" class="rotate-wrapper">
+    <div id="innerContainer">
+      <main id="app" class="center" aria-live="polite">
+        <!-- HOME -->
+        <section id="homeView" class="center" style="display:flex;">
+          <div class="cta-block">
+            <h1 class="title">Brauchst du Hilfe?</h1>
 
-<div id="rotateWrap">
+            <div class="cta">
+              <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
+              <button id="btn-de" class="btn-circle">hier klicken</button>
+            </div>
 
-<main id="app" class="center" aria-live="polite">
+            <div class="cta" style="margin-top:14px;" dir="rtl">
+              <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+              <button id="btn-ar" class="btn-circle">اضغط هنا</button>
+            </div>
+          </div>
 
-  <!-- HOME -->
-  <section id="homeView" class="center" style="display:flex;">
-    <div class="cta-block">
-      <h1 class="title">Brauchst du Hilfe?</h1>
+          <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+        </section>
 
-      <div class="cta">
-        <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
-        <button id="btn-de" class="btn-circle">hier klicken</button>
-      </div>
+        <!-- Themen -->
+        <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+          <div class="topbar">
+            <button id="backBtn" class="link-back">← Zurück</button>
+            <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+            <div style="width:48px;"></div>
+          </div>
 
-      <div class="cta" dir="rtl">
-        <p>هل تحتاج إلى مساعدة باللغة العربية؟ — اضغط هنا</p>
-        <button id="btn-ar" class="btn-circle">اضغط هنا</button>
-      </div>
+          <div class="topics-wrap" id="topicsWrap"></div>
+
+          <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
+        </section>
+      </main>
     </div>
 
-    <footer>© <span id="year"></span> – Hilfe-Portal</footer>
-  </section>
-
-  <!-- THEMEN -->
-  <section id="topicsView" style="display:none;width:100%;max-width:980px;">
-    <div class="topbar">
-      <button id="backBtn" class="link-back">← Zurück</button>
-      <h2 id="topicsTitle"></h2>
-      <div style="width:48px;"></div>
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+      <div id="modalBox" class="modal">
+        <button id="closeModal" class="modal-close">✕</button>
+        <h3 id="modalTitle"></h3>
+        <div id="modalContent" style="margin-top:8px;"></div>
+      </div>
     </div>
+  </div> <!-- end rotateWrap -->
 
-    <div class="topics-wrap" id="topicsWrap"></div>
+  <script>
+    const topics = [
+      {
+        id:1,
+        deTitle:"Islamische Eheschließung (Nikah)",
+        arTitle:"الزواج الإسلامي (النكاح)",
+        deInfo:"Unterlagen: Erweiterte Meldebescheinigung vom Rathaus, Kopie der Ausweise beider Partner.<br><br>Termin buchen:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
+        arInfo:"لإجراء عقد الزواج الإسلامي يجب إحضار شهادة السكن الموسعة ونسخ من بطاقات الهوية."
+      },
+      {
+        id:2,
+        deTitle:"Arabisch lernen für Kinder",
+        arTitle:"تعليم اللغة العربية للأطفال",
+        deInfo:"Anmeldung erforderlich.",
+        arInfo:"التسجيل مطلوب."
+      },
+      {
+        id:3,
+        deTitle:"Quran lernen für Kinder",
+        arTitle:"تعليم القرآن الكريم للأطفال",
+        deInfo:"Anmeldung erforderlich.",
+        arInfo:"التسجيل مطلوب."
+      },
+      {
+        id:4,
+        deTitle:"Vorträge des Imams",
+        arTitle:"محاضرات الإمام",
+        deInfo:"Die Vorträge finden sonntags nach dem Salat Al-‘Asr statt.",
+        arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر."
+      },
+      {
+        id:5,
+        deTitle:"Fragen zur Islamologie / Kontakt zum Imam",
+        arTitle:"أسئلة واستفسارات أخرى / تواصل مع الإمام",
+        deInfo:"Email: info@iz-stuttgart.de",
+        arInfo:"البريد الإلكتروني: info@iz-stuttgart.de"
+      }
+    ];
 
-    <footer style="text-align:center;color:rgba(255,255,255,0.6);font-size:13px;">
-      Wähle ein Thema, um mehr zu erfahren
-    </footer>
-  </section>
+    const homeView = document.getElementById('homeView');
+    const topicsView = document.getElementById('topicsView');
+    const topicsWrap = document.getElementById('topicsWrap');
+    const topicsTitle = document.getElementById('topicsTitle');
+    const backBtn = document.getElementById('backBtn');
+    const yearSpan = document.getElementById('year');
 
-</main>
+    const btnDe = document.getElementById('btn-de');
+    const btnAr = document.getElementById('btn-ar');
 
-</div> <!-- rotateWrap END -->
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalBox = document.getElementById('modalBox');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+    const closeModal = document.getElementById('closeModal');
 
-<!-- MODAL -->
-<div id="modalOverlay" class="modal-overlay">
-  <div id="modalBox" class="modal">
-    <button id="closeModal" class="modal-close">✕</button>
-    <h3 id="modalTitle"></h3>
-    <div id="modalContent"></div>
-  </div>
-</div>
+    let currentLang = null;
 
-<script>
-const topics = [
-  {
-    id:1,
-    deTitle:"Islamische Eheschließung (Nikah)",
-    arTitle:"الزواج الإسلامي (النكاح)",
-    deInfo:"Unterlagen: Erweiterte Meldebescheinigung.<br><br>Termin:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
-    arInfo:"يجب إحضار شهادة السكن ونسخ بطاقات الهوية."
-  }
-];
+    yearSpan.textContent = new Date().getFullYear();
 
-const homeView = document.getElementById('homeView');
-const topicsView = document.getElementById('topicsView');
-const topicsWrap = document.getElementById('topicsWrap');
-const topicsTitle = document.getElementById('topicsTitle');
-const backBtn = document.getElementById('backBtn');
-const btnDe = document.getElementById('btn-de');
-const btnAr = document.getElementById('btn-ar');
-const modalOverlay = document.getElementById('modalOverlay');
-const modalBox = document.getElementById('modalBox');
-const modalTitle = document.getElementById('modalTitle');
-const modalContent = document.getElementById('modalContent');
-const closeModal = document.getElementById('closeModal');
+    btnDe.addEventListener('click', () => openTopics('de'));
+    btnAr.addEventListener('click', () => openTopics('ar'));
 
-let currentLang = null;
-document.getElementById("year").textContent = new Date().getFullYear();
+    backBtn.addEventListener('click', () => {
+      closeModalIfOpen();
+      topicsView.style.display = 'none';
+      homeView.style.display = 'flex';
+      document.documentElement.lang = 'de';
+      currentLang = null;
+      topicsWrap.innerHTML = '';
+    });
 
-btnDe.onclick = ()=> openTopics("de");
-btnAr.onclick = ()=> openTopics("ar");
+    function openModal(topic) {
+      const isAR = currentLang === 'ar';
 
-backBtn.onclick = () => {
-  topicsView.style.display = "none";
-  homeView.style.display = "flex";
-  topicsWrap.innerHTML = "";
-  currentLang = null;
-  closeModalIfOpen();
-};
+      modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
 
-function openTopics(lang){
-  currentLang = lang;
-  homeView.style.display = "none";
-  topicsView.style.display = "block";
+      // IMPORTANT: HTML nicht escapen → QR-Code funktioniert
+      modalContent.innerHTML = isAR
+        ? `<div dir="rtl">${topic.arInfo}</div>`
+        : `<div>${topic.deInfo}</div>`;
 
-  if(lang==="ar"){
-    topicsTitle.textContent = "اختر موضوعاً";
-    topicsWrap.dir = "rtl";
-  } else {
-    topicsTitle.textContent = "Themenübersicht";
-    topicsWrap.dir = "ltr";
-  }
+      modalOverlay.style.display = 'flex';
+      requestAnimationFrame(()=> modalBox.classList.add('open'));
+    }
 
-  renderTopicCircles();
-}
+    function closeModalIfOpen() {
+      if (modalOverlay.style.display === 'flex') {
+        modalBox.classList.remove('open');
+        setTimeout(()=>{
+          modalOverlay.style.display = 'none';
+          modalTitle.textContent = '';
+          modalContent.innerHTML = '';
+        },180);
+      }
+    }
 
-function renderTopicCircles(){
-  topicsWrap.innerHTML = "";
-  const rect = topicsWrap.getBoundingClientRect();
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
-  const radius = Math.min(rect.width, rect.height) * 0.45;
+    closeModal.addEventListener('click', closeModalIfOpen);
+    modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) closeModalIfOpen(); });
 
-  topics.forEach((t,i)=>{
-    const angle = (i / topics.length) * Math.PI*2 - Math.PI/2;
-    const x = centerX + radius * Math.cos(angle);
-    const y = centerY + radius * Math.sin(angle);
+    function openTopics(lang){
+      currentLang = lang;
+      homeView.style.display = 'none';
+      topicsView.style.display = 'block';
 
-    const btn = document.createElement("button");
-    btn.className = "topic-circle";
-    btn.style.left = x+"px";
-    btn.style.top = y+"px";
-    btn.style.transform = "translate(-50%, -50%)";
-    btn.innerHTML = currentLang==="ar" ? t.arTitle : t.deTitle;
-    btn.onclick = () => openModal(t);
+      if (lang === 'ar') {
+        topicsTitle.textContent = 'اختر موضوعاً';
+        topicsWrap.setAttribute('dir','rtl');
+        document.documentElement.lang = 'ar';
+      } else {
+        topicsTitle.textContent = 'Themenübersicht';
+        topicsWrap.setAttribute('dir','ltr');
+        document.documentElement.lang = 'de';
+      }
 
-    topicsWrap.appendChild(btn);
-  });
-}
+      renderTopicCircles();
+    }
 
-function openModal(t){
-  modalTitle.textContent = currentLang==="ar" ? t.arTitle : t.deTitle;
-  modalContent.innerHTML = currentLang==="ar" ? t.arInfo : t.deInfo;
-  modalOverlay.style.display = "flex";
-  requestAnimationFrame(()=> modalBox.classList.add("open"));
-}
+    function renderTopicCircles(){
+      topicsWrap.innerHTML = '';
 
-function closeModalIfOpen(){
-  modalBox.classList.remove("open");
-  setTimeout(()=>{
-    modalOverlay.style.display = "none";
-    modalContent.innerHTML = "";
-  },180);
-}
+      const rect = topicsWrap.getBoundingClientRect();
+      const cw = rect.width;
+      const ch = rect.height;
+      const centerX = cw/2;
+      const centerY = ch/2;
+      const radius = Math.min(cw, ch) * 0.50;
 
-closeModal.onclick = closeModalIfOpen;
-modalOverlay.onclick = e=>{ if(e.target===modalOverlay) closeModalIfOpen(); };
+      topics.forEach((t,i) => {
+        const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
 
-/* ============================= */
-/*   AUTOMATISCHE ROTATION       */
-/* ============================= */
-function fixViewport(){
-  const wrap = document.getElementById("rotateWrap");
-  if(!wrap) return;
+        const btn = document.createElement('button');
+        btn.className = 'topic-circle';
+        btn.type = 'button';
+        btn.style.left = `${x}px`;
+        btn.style.top = `${y}px`;
+        btn.style.transform = 'translate(-50%,-50%)';
 
-  const portrait = window.matchMedia("(orientation: portrait)").matches;
+        btn.innerHTML = currentLang==='ar'
+          ? `<div style="direction:rtl">${t.arTitle}</div>`
+          : `<div>${t.deTitle}</div>`;
 
-  if(portrait){
-    wrap.style.transform = "rotate(0deg)";
-    wrap.style.width = "100vw";
-    wrap.style.height = "100vh";
-  } else {
-    wrap.style.transform = "rotate(90deg)";
-    wrap.style.width = "100vh";
-    wrap.style.height = "100vw";
-  }
+        btn.addEventListener('click', ()=> openModal(t));
+        topicsWrap.appendChild(btn);
+      });
+    }
 
-  // immer zentrieren
-  wrap.style.display="flex";
-  wrap.style.alignItems="center";
-  wrap.style.justifyContent="center";
-}
+    /* -----------------------------
+       AUTO ROTATE: robust counter-rotation + scaling
+       -----------------------------
+       This routine reads the device rotation angle (screen.orientation.angle or window.orientation)
+       and applies the *inverse* rotation to the wrapper so the UI remains upright for the user.
+       It also computes a scale factor so the content always fits into the viewport (prevents clipping).
+    */
+    (function setupAutoRotation(){
+      const wrap = document.getElementById('rotateWrap');
+      const inner = document.getElementById('innerContainer'); // contains #app
+      if(!wrap || !inner) return;
 
-window.addEventListener("load", fixViewport);
-window.addEventListener("orientationchange", ()=> setTimeout(fixViewport,200));
-window.addEventListener("resize", ()=> setTimeout(fixViewport,200));
+      // compute and apply transform according to device angle
+      function applyTransform(){
+        // get device rotation angle in degrees (0, 90, 180, 270)
+        let angle = 0;
+        if (screen && screen.orientation && typeof screen.orientation.angle === 'number') {
+          angle = screen.orientation.angle;
+        } else if (typeof window.orientation === 'number') {
+          angle = window.orientation;
+        } else {
+          // fallback: infer from width/height
+          angle = (window.innerWidth >= window.innerHeight) ? 90 : 0;
+        }
 
-</script>
+        // Normalize angle to integer in [0,360)
+        angle = ((angle % 360) + 360) % 360;
+
+        // We want UI upright for the user -> rotate the wrapper by -angle
+        const rotation = -angle;
+
+        // Compute scaling so that inner content fits into viewport after rotation
+        // Measure inner's natural bounding box (use getBoundingClientRect)
+        // Note: reading bounding rect before transform
+        inner.style.transform = 'none'; // reset to measure natural size
+        const box = inner.getBoundingClientRect();
+        const contentW = box.width || window.innerWidth;
+        const contentH = box.height || window.innerHeight;
+
+        // Compute available viewport dims (we'll use window dimensions)
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+
+        // After rotating by rotation degrees, the effective bounding box of content swaps dims when 90/270
+        const is90 = (Math.abs(angle) === 90 || Math.abs(angle) === 270);
+        const neededW = is90 ? contentH : contentW;
+        const neededH = is90 ? contentW : contentH;
+
+        // scale to fit, leave some tiny margin
+        const scale = Math.min(vw / neededW, vh / neededH, 1);
+
+        // Apply transform to wrapper: center + counter-rotate + scale
+        // Use translate to keep centered: we use rotate about center, so no further translate typically needed
+        wrap.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+
+        // ensure inner is centered (flex on wrap does that). If rotated 90/270, the browser still centers
+        // but some UA issues require forcing translate offset for perfect centering — we avoid manual translates
+      }
+
+      // debounce helper
+      let t = null;
+      function scheduleApply(){
+        clearTimeout(t);
+        t = setTimeout(applyTransform, 80);
+      }
+
+      // initial
+      applyTransform();
+
+      // listeners
+      window.addEventListener('orientationchange', scheduleApply, {passive:true});
+      window.addEventListener('resize', scheduleApply);
+
+      // also react if screen.orientation changes (some browsers)
+      if (screen && screen.orientation && screen.orientation.addEventListener) {
+        try { screen.orientation.addEventListener('change', scheduleApply); } catch(e) { /* ignore */ }
+      }
+    })();
+
+    // ensure topic circles recalc on resize after rotation (debounced)
+    window.addEventListener('resize', () => {
+      clearTimeout(window._renderTopicTimeout);
+      window._renderTopicTimeout = setTimeout(()=> {
+        if (currentLang) renderTopicCircles();
+      }, 240);
+    });
+
+  </script>
 
 </body>
 </html>
