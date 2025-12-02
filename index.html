@@ -12,7 +12,7 @@
       --border-black:#000;
     }
     /* Grund */
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow:hidden;}
     body{
       min-height:100%;
       background-color:var(--bg-black);
@@ -24,6 +24,27 @@
       color:var(--white);
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* --- ROTATE WRAPPER: position fixed so rotation doesn't push page out --- */
+    .rotate-wrapper{
+      position:fixed;
+      inset:0;
+      width:100%;
+      height:100%;
+      transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease;
+      transform-origin: top left;
+      display:block;
+      /* ensure content inside can scroll if needed */
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    /* When device is portrait we rotate the wrapper 90deg and shift it into view */
+    .rotate-wrapper.portrait {
+      transform: rotate(90deg) translateY(-100%);
+      /* after rotation, wrapper's visual width/height swap; keep full coverage */
+      width:100vh;
+      height:100vw;
     }
 
     .center {
@@ -153,10 +174,10 @@
     }
     /* QR-Code / Bilder im Modal zentrieren */
     #modalContent img {
-    display: block;       /* macht das Bild zu einem Blockelement */
-    margin: 12px auto;    /* zentriert horizontal */
-    max-width: 80%;       /* optional: passt Bildbreite an Modal an */
-    height: auto;         /* behält das Seitenverhältnis bei */
+      display: block;
+      margin: 12px auto;
+      max-width: 80%;
+      height: auto;
     }
 
     .modal.open{ transform:translateY(0) scale(1); opacity:1; }
@@ -182,76 +203,56 @@
       .topic-circle{ width:96px;height:96px;font-size:14px; }
       .topics-wrap{ height:340px; }
     }
-
-    .rotate-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  background: #fff;
-  color: #000;
-  border-radius: 8px;
-  border: 2px solid #000;
-  cursor: pointer;
-  z-index: 2000;
-}
-
-.rotate-wrapper {
-  transition: transform 0.4s ease;
-  transform-origin: center center;
-}
-
   </style>
 </head>
 
 <body>
-  <main id="app" class="center" aria-live="polite">
-    <!-- HOME -->
-    <section id="homeView" class="center" style="display:flex;">
-      <div class="cta-block">
-        <h1 class="title">Brauchst du Hilfe?</h1>
+  <!-- rotate wrapper: keeps all original content intact inside -->
+  <div id="rotateWrap" class="rotate-wrapper">
+    <main id="app" class="center" aria-live="polite">
+      <!-- HOME -->
+      <section id="homeView" class="center" style="display:flex;">
+        <div class="cta-block">
+          <h1 class="title">Brauchst du Hilfe?</h1>
 
-        <div class="cta">
-          <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
-          <button id="btn-de" class="btn-circle">hier klicken</button>
+          <div class="cta">
+            <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
+            <button id="btn-de" class="btn-circle">hier klicken</button>
+          </div>
+
+          <div class="cta" style="margin-top:14px;" dir="rtl">
+            <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+            <button id="btn-ar" class="btn-circle">اضغط هنا</button>
+          </div>
         </div>
 
-        <div class="cta" style="margin-top:14px;" dir="rtl">
-          <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
-          <button id="btn-ar" class="btn-circle">اضغط هنا</button>
+        <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+      </section>
+
+      <!-- Themen -->
+      <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+        <div class="topbar">
+          <button id="backBtn" class="link-back">← Zurück</button>
+          <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+          <div style="width:48px;"></div>
         </div>
+
+        <div class="topics-wrap" id="topicsWrap"></div>
+
+        <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
+      </section>
+    </main>
+
+    <!-- Modal -->
+    <div id="modalOverlay" class="modal-overlay">
+      <div id="modalBox" class="modal">
+        <button id="closeModal" class="modal-close">✕</button>
+        <h3 id="modalTitle"></h3>
+        <div id="modalContent" style="margin-top:8px;"></div>
       </div>
-
-      <footer>© <span id="year"></span> – Hilfe-Portal</footer>
-    </section>
-
-    <!-- Themen -->
-    <section id="topicsView" style="display:none;width:100%;max-width:980px;">
-      <div class="topbar">
-        <button id="backBtn" class="link-back">← Zurück</button>
-        <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
-        <div style="width:48px;"></div>
-      </div>
-
-      <div class="topics-wrap" id="topicsWrap"></div>
-
-      <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
-    </section>
-  </main>
-
-  <!-- Modal -->
-  <div id="modalOverlay" class="modal-overlay">
-    <div id="modalBox" class="modal">
-      <button id="closeModal" class="modal-close">✕</button>
-      <h3 id="modalTitle"></h3>
-      <div id="modalContent" style="margin-top:8px;"></div>
     </div>
-  </div>
-  
-  <button id="rotateBtn" class="rotate-btn">Drehen</button>
-  
+  </div> <!-- end rotateWrap -->
+
   <script>
     const topics = [
       {
@@ -369,19 +370,6 @@
       renderTopicCircles();
     }
 
-    // Rotation Feature
-        let rotated = false;
-
-     // wrap body content
-        document.body.innerHTML = `<div id="rotateWrap" class="rotate-wrapper">` + document.body.innerHTML + `</div>`;
-        const rotateWrap = document.getElementById('rotateWrap');
-
-        document.getElementById('rotateBtn').addEventListener('click', ()=> {
-        rotated = !rotated;
-        rotateWrap.style.transform = rotated ? 'rotate(90deg)' : 'rotate(0deg)';
-        });
-
-
     function renderTopicCircles(){
       topicsWrap.innerHTML = '';
 
@@ -412,6 +400,44 @@
         topicsWrap.appendChild(btn);
       });
     }
+
+    /* -----------------------------
+       AUTO ROTATE: force landscape
+       -----------------------------
+       Minimal JS: add/remove 'portrait' class on wrapper when
+       the viewport is taller than wide (portrait). This rotates
+       the whole wrapper 90deg and keeps all original code intact.
+    */
+    (function setupAutoLandscape(){
+      const wrap = document.getElementById('rotateWrap');
+      if(!wrap) return;
+
+      function apply() {
+        // consider devicePixelRatio? using simple compare is fine
+        if (window.innerHeight > window.innerWidth) {
+          // portrait -> rotate wrapper so it displays landscape
+          wrap.classList.add('portrait');
+        } else {
+          wrap.classList.remove('portrait');
+        }
+      }
+
+      // initial
+      apply();
+      // update on resize / orientation change
+      window.addEventListener('resize', apply);
+      window.addEventListener('orientationchange', apply);
+    })();
+
+    // make sure circles render when layout changes (rotation may change bounding rect)
+    window.addEventListener('resize', () => {
+      // small debounce
+      clearTimeout(window._renderTopicTimeout);
+      window._renderTopicTimeout = setTimeout(()=> {
+        if (currentLang) renderTopicCircles();
+      }, 220);
+    });
+
   </script>
 
 </body>
