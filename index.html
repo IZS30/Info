@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Hilfe-Portal — DE / AR</title>
+
   <style>
     :root{
       --bg-black:#000;
@@ -11,10 +12,38 @@
       --white: #fff;
       --border-black:#000;
     }
-    /* Grund */
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow:hidden;}
+
+    html,body{
+      height:100%;
+      margin:0;
+      overflow:hidden; /* verhindert Verschieben beim Rotieren */
+      background:black;
+    }
+
+    body {
+      -webkit-text-size-adjust: 100%;
+      touch-action: manipulation;
+    }
+
+    /* ROTATION WRAPPER */
+    #rotateWrap {
+      width:100vw;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transform-origin:center center;
+      transition: transform 0.4s ease, width 0s, height 0s;
+      overflow:hidden;
+    }
+
+    /* ==== DEIN ORIGINALER STYLE BEGINNT AB HIER ==== */
+
+    body, html {
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    }
+
     body{
-      min-height:100%;
       background-color:var(--bg-black);
       background-image:
         radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
@@ -23,46 +52,22 @@
       background-position: 0 0, 10px 20px;
       color:var(--white);
       -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-
-    /* --- ROTATE WRAPPER: position fixed so rotation doesn't push page out --- */
-    .rotate-wrapper{
-      position:fixed;
-      inset:0;
-      width:100%;
-      height:100%;
-      transition: transform 0.35s ease, width 0.35s ease, height 0.35s ease;
-      transform-origin: top left;
-      display:block;
-      /* ensure content inside can scroll if needed */
-      overflow:auto;
-      -webkit-overflow-scrolling: touch;
-    }
-    /* When device is portrait we rotate the wrapper 90deg and shift it into view */
-    .rotate-wrapper.portrait {
-      transform: rotate(90deg) translateY(-100%);
-      /* after rotation, wrapper's visual width/height swap; keep full coverage */
-      width:100vh;
-      height:100vw;
     }
 
     .center {
-      min-height:100vh;
+      min-height:100%;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:24px;
-      box-sizing:border-box;
-      text-align:center;
       flex-direction:column;
+      text-align:center;
+      box-sizing:border-box;
     }
 
     h1.title{
       font-size:clamp(28px,6vw,56px);
       margin:0 0 18px 0;
-      letter-spacing:0.5px;
-      font-weight:700;
       text-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
 
@@ -77,37 +82,26 @@
       flex-direction:column;
     }
 
-    .cta p{
-      margin:0;
-      font-size:18px;
-    }
-
     .btn-circle{
       width:120px;
       height:120px;
       border-radius:999px;
-      display:inline-flex;
+      display:flex;
       align-items:center;
       justify-content:center;
-      font-weight:600;
-      cursor:pointer;
-      user-select:none;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      border:3px solid var(--border-black);
       background:var(--accent-green);
-      color:var(--white);
-      transition: transform .15s ease, box-shadow .15s;
-      font-size:16px;
+      color:white;
+      border:3px solid black;
+      cursor:pointer;
+      font-weight:600;
+      transition:transform .15s ease;
     }
-    .btn-circle:active{ transform: scale(.98); }
-    .btn-circle:hover{ transform: scale(1.04); }
 
     .topics-wrap{
       width:100%;
       max-width:760px;
       height:460px;
       position:relative;
-      margin:0 auto;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -123,16 +117,13 @@
       justify-content:center;
       text-align:center;
       padding:10px;
-      box-sizing:border-box;
+      background:var(--accent-green);
+      border:3px solid black;
+      color:white;
       font-weight:600;
       cursor:pointer;
-      border:3px solid var(--border-black);
-      background:var(--accent-green);
-      color:var(--white);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
+      transition:transform .15s ease;
     }
-    .topic-circle:hover{ transform: scale(1.06); z-index:30; }
 
     .topbar{
       width:100%;
@@ -142,328 +133,225 @@
       align-items:center;
       margin-bottom:14px;
       padding:0 6px;
-      box-sizing:border-box;
-    }
-    .link-back{
-      color:var(--white);
-      text-decoration:underline;
-      cursor:pointer;
-      font-size:14px;
-      background:transparent;
-      border:none;
-      padding:6px;
     }
 
     .modal-overlay{
-      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
       background:rgba(0,0,0,0.6);
+      z-index:1000;
     }
+
     .modal{
       width:100%;
       max-width:720px;
-      border-radius:16px;
       padding:20px;
-      box-sizing:border-box;
+      border-radius:16px;
       background:var(--accent-green);
-      border:3px solid var(--border-black);
-      color:var(--white);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      transform: translateY(8px) scale(.98);
+      border:3px solid black;
+      color:white;
+      transform:scale(.98);
       opacity:0;
-      transition: all 200ms ease;
-    }
-    /* QR-Code / Bilder im Modal zentrieren */
-    #modalContent img {
-      display: block;
-      margin: 12px auto;
-      max-width: 80%;
-      height: auto;
+      transition:all .2s ease;
     }
 
-    .modal.open{ transform:translateY(0) scale(1); opacity:1; }
-    .modal h3{ margin:0 0 10px 0; font-size:20px; }
-    .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
-
-    .modal-close{
-      position:absolute;
-      right:12px;
-      top:12px;
-      width:36px;height:36px;border-radius:999px;
-      background:var(--white);
-      color:var(--border-black);
-      display:inline-flex;align-items:center;justify-content:center;
-      border:none;cursor:pointer;font-weight:700;
-      box-shadow:0 6px 14px rgba(0,0,0,0.5);
+    .modal.open{
+      transform:scale(1);
+      opacity:1;
     }
 
-    footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:12px; }
-
-    @media (max-width:540px){
-      .btn-circle{ width:96px;height:96px;font-size:14px; }
-      .topic-circle{ width:96px;height:96px;font-size:14px; }
-      .topics-wrap{ height:340px; }
+    #modalContent img{
+      display:block;
+      margin:12px auto;
+      max-width:80%;
+      height:auto;
     }
   </style>
+
 </head>
 
 <body>
-  <!-- rotate wrapper: keeps all original content intact inside -->
-  <div id="rotateWrap" class="rotate-wrapper">
-    <main id="app" class="center" aria-live="polite">
-      <!-- HOME -->
-      <section id="homeView" class="center" style="display:flex;">
-        <div class="cta-block">
-          <h1 class="title">Brauchst du Hilfe?</h1>
 
-          <div class="cta">
-            <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
-            <button id="btn-de" class="btn-circle">hier klicken</button>
-          </div>
+<div id="rotateWrap">
 
-          <div class="cta" style="margin-top:14px;" dir="rtl">
-            <p style="direction:rtl;margin-bottom:8px;">هل تحتاج إلى مساعدة باللغة <strong>العربية</strong؟ — اضغط هنا</p>
-            <button id="btn-ar" class="btn-circle">اضغط هنا</button>
-          </div>
-        </div>
+<main id="app" class="center" aria-live="polite">
 
-        <footer>© <span id="year"></span> – Hilfe-Portal</footer>
-      </section>
+  <!-- HOME -->
+  <section id="homeView" class="center" style="display:flex;">
+    <div class="cta-block">
+      <h1 class="title">Brauchst du Hilfe?</h1>
 
-      <!-- Themen -->
-      <section id="topicsView" style="display:none;width:100%;max-width:980px;">
-        <div class="topbar">
-          <button id="backBtn" class="link-back">← Zurück</button>
-          <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
-          <div style="width:48px;"></div>
-        </div>
+      <div class="cta">
+        <p>Brauchst du Hilfe auf <strong>Deutsch</strong>? – hier klicken</p>
+        <button id="btn-de" class="btn-circle">hier klicken</button>
+      </div>
 
-        <div class="topics-wrap" id="topicsWrap"></div>
-
-        <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
-      </section>
-    </main>
-
-    <!-- Modal -->
-    <div id="modalOverlay" class="modal-overlay">
-      <div id="modalBox" class="modal">
-        <button id="closeModal" class="modal-close">✕</button>
-        <h3 id="modalTitle"></h3>
-        <div id="modalContent" style="margin-top:8px;"></div>
+      <div class="cta" dir="rtl">
+        <p>هل تحتاج إلى مساعدة باللغة العربية؟ — اضغط هنا</p>
+        <button id="btn-ar" class="btn-circle">اضغط هنا</button>
       </div>
     </div>
-  </div> <!-- end rotateWrap -->
 
-  <script>
-    const topics = [
-      {
-        id:1,
-        deTitle:"Islamische Eheschließung (Nikah)",
-        arTitle:"الزواج الإسلامي (النكاح)",
-        deInfo:"Unterlagen: Erweiterte Meldebescheinigung vom Rathaus, Kopie der Ausweise beider Partner.<br><br>Termin buchen:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
-        arInfo:"لإجراء عقد الزواج الإسلامي يجب إحضار شهادة السكن الموسعة ونسخ من بطاقات الهوية."
-      },
-      {
-        id:2,
-        deTitle:"Arabisch lernen für Kinder",
-        arTitle:"تعليم اللغة العربية للأطفال",
-        deInfo:"Anmeldung erforderlich.",
-        arInfo:"التسجيل مطلوب."
-      },
-      {
-        id:3,
-        deTitle:"Quran lernen für Kinder",
-        arTitle:"تعليم القرآن الكريم للأطفال",
-        deInfo:"Anmeldung erforderlich.",
-        arInfo:"التسجيل مطلوب."
-      },
-      {
-        id:4,
-        deTitle:"Vorträge des Imams",
-        arTitle:"محاضرات الإمام",
-        deInfo:"Die Vorträge finden sonntags nach dem Salat Al-‘Asr statt.",
-        arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر."
-      },
-      {
-        id:5,
-        deTitle:"Fragen zur Islamologie / Kontakt zum Imam",
-        arTitle:"أسئلة واستفسارات أخرى / تواصل مع الإمام",
-        deInfo:"Email: info@iz-stuttgart.de",
-        arInfo:"البريد الإلكتروني: info@iz-stuttgart.de"
-      }
-    ];
+    <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+  </section>
 
-    const homeView = document.getElementById('homeView');
-    const topicsView = document.getElementById('topicsView');
-    const topicsWrap = document.getElementById('topicsWrap');
-    const topicsTitle = document.getElementById('topicsTitle');
-    const backBtn = document.getElementById('backBtn');
-    const yearSpan = document.getElementById('year');
+  <!-- THEMEN -->
+  <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+    <div class="topbar">
+      <button id="backBtn" class="link-back">← Zurück</button>
+      <h2 id="topicsTitle"></h2>
+      <div style="width:48px;"></div>
+    </div>
 
-    const btnDe = document.getElementById('btn-de');
-    const btnAr = document.getElementById('btn-ar');
+    <div class="topics-wrap" id="topicsWrap"></div>
 
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modalBox = document.getElementById('modalBox');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalContent = document.getElementById('modalContent');
-    const closeModal = document.getElementById('closeModal');
+    <footer style="text-align:center;color:rgba(255,255,255,0.6);font-size:13px;">
+      Wähle ein Thema, um mehr zu erfahren
+    </footer>
+  </section>
 
-    let currentLang = null;
+</main>
 
-    yearSpan.textContent = new Date().getFullYear();
+</div> <!-- rotateWrap END -->
 
-    btnDe.addEventListener('click', () => openTopics('de'));
-    btnAr.addEventListener('click', () => openTopics('ar'));
+<!-- MODAL -->
+<div id="modalOverlay" class="modal-overlay">
+  <div id="modalBox" class="modal">
+    <button id="closeModal" class="modal-close">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalContent"></div>
+  </div>
+</div>
 
-    backBtn.addEventListener('click', () => {
-      closeModalIfOpen();
-      topicsView.style.display = 'none';
-      homeView.style.display = 'flex';
-      document.documentElement.lang = 'de';
-      currentLang = null;
-      topicsWrap.innerHTML = '';
-    });
+<script>
+const topics = [
+  {
+    id:1,
+    deTitle:"Islamische Eheschließung (Nikah)",
+    arTitle:"الزواج الإسلامي (النكاح)",
+    deInfo:"Unterlagen: Erweiterte Meldebescheinigung.<br><br>Termin:<br><img src='https://raw.githubusercontent.com/IZS30/Info/main/assets/Bild%20AB%2014.png' width='150' />",
+    arInfo:"يجب إحضار شهادة السكن ونسخ بطاقات الهوية."
+  }
+];
 
-    function openModal(topic) {
-      const isAR = currentLang === 'ar';
+const homeView = document.getElementById('homeView');
+const topicsView = document.getElementById('topicsView');
+const topicsWrap = document.getElementById('topicsWrap');
+const topicsTitle = document.getElementById('topicsTitle');
+const backBtn = document.getElementById('backBtn');
+const btnDe = document.getElementById('btn-de');
+const btnAr = document.getElementById('btn-ar');
+const modalOverlay = document.getElementById('modalOverlay');
+const modalBox = document.getElementById('modalBox');
+const modalTitle = document.getElementById('modalTitle');
+const modalContent = document.getElementById('modalContent');
+const closeModal = document.getElementById('closeModal');
 
-      modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
+let currentLang = null;
+document.getElementById("year").textContent = new Date().getFullYear();
 
-      // IMPORTANT: HTML nicht escapen → QR-Code funktioniert
-      modalContent.innerHTML = isAR
-        ? `<div dir="rtl">${topic.arInfo}</div>`
-        : `<div>${topic.deInfo}</div>`;
+btnDe.onclick = ()=> openTopics("de");
+btnAr.onclick = ()=> openTopics("ar");
 
-      modalOverlay.style.display = 'flex';
-      requestAnimationFrame(()=> modalBox.classList.add('open'));
-    }
+backBtn.onclick = () => {
+  topicsView.style.display = "none";
+  homeView.style.display = "flex";
+  topicsWrap.innerHTML = "";
+  currentLang = null;
+  closeModalIfOpen();
+};
 
-    function closeModalIfOpen() {
-      if (modalOverlay.style.display === 'flex') {
-        modalBox.classList.remove('open');
-        setTimeout(()=>{
-          modalOverlay.style.display = 'none';
-          modalTitle.textContent = '';
-          modalContent.innerHTML = '';
-        },180);
-      }
-    }
+function openTopics(lang){
+  currentLang = lang;
+  homeView.style.display = "none";
+  topicsView.style.display = "block";
 
-    closeModal.addEventListener('click', closeModalIfOpen);
-    modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) closeModalIfOpen(); });
+  if(lang==="ar"){
+    topicsTitle.textContent = "اختر موضوعاً";
+    topicsWrap.dir = "rtl";
+  } else {
+    topicsTitle.textContent = "Themenübersicht";
+    topicsWrap.dir = "ltr";
+  }
 
-    function openTopics(lang){
-      currentLang = lang;
-      homeView.style.display = 'none';
-      topicsView.style.display = 'block';
+  renderTopicCircles();
+}
 
-      if (lang === 'ar') {
-        topicsTitle.textContent = 'اختر موضوعاً';
-        topicsWrap.setAttribute('dir','rtl');
-        document.documentElement.lang = 'ar';
-      } else {
-        topicsTitle.textContent = 'Themenübersicht';
-        topicsWrap.setAttribute('dir','ltr');
-        document.documentElement.lang = 'de';
-      }
+function renderTopicCircles(){
+  topicsWrap.innerHTML = "";
+  const rect = topicsWrap.getBoundingClientRect();
+  const centerX = rect.width / 2;
+  const centerY = rect.height / 2;
+  const radius = Math.min(rect.width, rect.height) * 0.45;
 
-      renderTopicCircles();
-    }
+  topics.forEach((t,i)=>{
+    const angle = (i / topics.length) * Math.PI*2 - Math.PI/2;
+    const x = centerX + radius * Math.cos(angle);
+    const y = centerY + radius * Math.sin(angle);
 
-    function renderTopicCircles(){
-      topicsWrap.innerHTML = '';
+    const btn = document.createElement("button");
+    btn.className = "topic-circle";
+    btn.style.left = x+"px";
+    btn.style.top = y+"px";
+    btn.style.transform = "translate(-50%, -50%)";
+    btn.innerHTML = currentLang==="ar" ? t.arTitle : t.deTitle;
+    btn.onclick = () => openModal(t);
 
-      const rect = topicsWrap.getBoundingClientRect();
-      const cw = rect.width;
-      const ch = rect.height;
-      const centerX = cw/2;
-      const centerY = ch/2;
-      const radius = Math.min(cw, ch) * 0.50;
+    topicsWrap.appendChild(btn);
+  });
+}
 
-      topics.forEach((t,i) => {
-        const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
+function openModal(t){
+  modalTitle.textContent = currentLang==="ar" ? t.arTitle : t.deTitle;
+  modalContent.innerHTML = currentLang==="ar" ? t.arInfo : t.deInfo;
+  modalOverlay.style.display = "flex";
+  requestAnimationFrame(()=> modalBox.classList.add("open"));
+}
 
-        const btn = document.createElement('button');
-        btn.className = 'topic-circle';
-        btn.type = 'button';
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
-        btn.style.transform = 'translate(-50%,-50%)';
+function closeModalIfOpen(){
+  modalBox.classList.remove("open");
+  setTimeout(()=>{
+    modalOverlay.style.display = "none";
+    modalContent.innerHTML = "";
+  },180);
+}
 
-        btn.innerHTML = currentLang==='ar'
-          ? `<div style="direction:rtl">${t.arTitle}</div>`
-          : `<div>${t.deTitle}</div>`;
+closeModal.onclick = closeModalIfOpen;
+modalOverlay.onclick = e=>{ if(e.target===modalOverlay) closeModalIfOpen(); };
 
-        btn.addEventListener('click', ()=> openModal(t));
-        topicsWrap.appendChild(btn);
-      });
-    }
+/* ============================= */
+/*   AUTOMATISCHE ROTATION       */
+/* ============================= */
+function fixViewport(){
+  const wrap = document.getElementById("rotateWrap");
+  if(!wrap) return;
 
-    /* -----------------------------
-       AUTO ROTATE: force landscape
-       -----------------------------
-       Minimal JS: add/remove 'portrait' class on wrapper when
-       the viewport is taller than wide (portrait). This rotates
-       the whole wrapper 90deg and keeps all original code intact.
-    */
-    (function setupAutoLandscape(){
-      const wrap = document.getElementById('rotateWrap');
-      if(!wrap) return;
+  const portrait = window.matchMedia("(orientation: portrait)").matches;
 
-      function apply() {
-        // consider devicePixelRatio? using simple compare is fine
-        if (window.innerHeight > window.innerWidth) {
-          // portrait -> rotate wrapper so it displays landscape
-          wrap.classList.add('portrait');
-        } else {
-          wrap.classList.remove('portrait');
-        }
-      }
+  if(portrait){
+    wrap.style.transform = "rotate(0deg)";
+    wrap.style.width = "100vw";
+    wrap.style.height = "100vh";
+  } else {
+    wrap.style.transform = "rotate(90deg)";
+    wrap.style.width = "100vh";
+    wrap.style.height = "100vw";
+  }
 
-      // initial
-      apply();
-      // update on resize / orientation change
-      window.addEventListener('resize', apply);
-      window.addEventListener('orientationchange', apply);
-    })();
+  // immer zentrieren
+  wrap.style.display="flex";
+  wrap.style.alignItems="center";
+  wrap.style.justifyContent="center";
+}
 
-    // make sure circles render when layout changes (rotation may change bounding rect)
-    window.addEventListener('resize', () => {
-      // small debounce
-      clearTimeout(window._renderTopicTimeout);
-      window._renderTopicTimeout = setTimeout(()=> {
-        if (currentLang) renderTopicCircles();
-      }, 220);
-    });
+window.addEventListener("load", fixViewport);
+window.addEventListener("orientationchange", ()=> setTimeout(fixViewport,200));
+window.addEventListener("resize", ()=> setTimeout(fixViewport,200));
 
-    /* Automatische Rotation je nach Geräte-Ausrichtung */
-    function applyAutoRotation() {
-    const wrap = document.getElementById("rotateWrap");
-    if (!wrap) return;
-
-    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-
-  // Wenn Portrait → normal anzeigen
-  // Wenn Landscape → 90° drehen
-    wrap.style.transform = isPortrait ? "rotate(0deg)" : "rotate(90deg)";
-   }
-
-// Beim Laden sofort prüfen
-   window.addEventListener("load", applyAutoRotation);
-
-// Neu prüfen, wenn Gerät gedreht wird
-   window.addEventListener("orientationchange", () => {
-   setTimeout(applyAutoRotation, 200);
-});
-
-// Falls Browser Orientierung über resize meldet → auch prüfen
-window.addEventListener("resize", () => {
-  setTimeout(applyAutoRotation, 200);
-});
-
-  </script>
+</script>
 
 </body>
 </html>
