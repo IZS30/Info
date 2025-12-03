@@ -459,14 +459,19 @@
         const neededH = is90 ? contentW : contentH;
 
         // scale to fit, leave some tiny margin
-        const scale = Math.min(vw / neededW, vh / neededH, 1);
+        const scaleFit = Math.min(vw / neededW, vh / neededH, 1);
 
-        // Apply transform to wrapper: center + counter-rotate + scale
-        // Use translate to keep centered: we use rotate about center, so no further translate typically needed
-        wrap.style.transform = `rotate(${rotation}deg) scale(${scale})`;
+        // NEW: if rotated by 90°, increase size by ~60% (factor 1.6) but cap to a reasonable max.
+        // We compute desired = scaleFit * 1.6 but cap to maxAllowed (so it doesn't exceed a hard cap).
+        const EXTRA_FACTOR = 1.6;
+        const HARD_CAP = 1.6; // don't scale beyond this absolute multiplier
+        const finalScale = is90 ? Math.min(scaleFit * EXTRA_FACTOR, HARD_CAP) : scaleFit;
 
-        // ensure inner is centered (flex on wrap does that). If rotated 90/270, the browser still centers
-        // but some UA issues require forcing translate offset for perfect centering — we avoid manual translates
+        // Apply transform to wrapper: counter-rotate + scale
+        wrap.style.transform = `rotate(${rotation}deg) scale(${finalScale})`;
+
+        // If finalScale > scaleFit, enable overflow auto so user can still access content if slightly clipped
+        wrap.style.overflow = (finalScale > scaleFit) ? 'auto' : 'hidden';
       }
 
       // debounce helper
