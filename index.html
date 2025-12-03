@@ -111,8 +111,8 @@
 
     .topics-wrap{
       width:100%;
-      max-width:760px;
-      height:460px;
+      max-width:880px;
+      height:600px;
       position:relative;
       margin:0 auto;
       display:flex;
@@ -122,16 +122,17 @@
 
     .topic-circle{
       position:absolute;
-      width:150px;
-      height:150px;
+      width:200px;
+      height:200px;
       border-radius:999px;
       display:flex;
       align-items:center;
       justify-content:center;
       text-align:center;
-      padding:10px;
+      padding:14px;
       box-sizing:border-box;
       font-weight:600;
+      font-size: 20px;
       cursor:pointer;
       border:3px solid var(--border-black);
       background:var(--accent-green);
@@ -241,7 +242,7 @@
         <section id="topicsView" style="display:none;width:100%;max-width:980px;">
           <div class="topbar">
             <button id="backBtn" class="link-back">← Zurück</button>
-            <h2 id="topicsTitle" style="margin:0;font-size:18px;font-weight:600;"></h2>
+            <h2 id="topicsTitle" style="margin:0;font-size:20px;font-weight:600;"></h2>
             <div style="width:48px;"></div>
           </div>
 
@@ -391,7 +392,7 @@
       const centerY = ch / 2;
 
   // KORREKTUR: Radius reduzieren, damit Kreise NIE überlappen (auch mit Skalierung)
-      const radius = Math.min(cw, ch) * 0.36;
+      const radius = Math.min(cw, ch) * 0.60;
 
   // KORREKTUR: Kreisgröße dynamisch anpassen
       const circleSize = Math.min(cw, ch) * 0.22;
@@ -403,6 +404,7 @@
 
       const btn = document.createElement('button');
       btn.className = 'topic-circle';
+      btn.style.fontSize = (cw * 0.03) + "px";
       btn.type = 'button';
 
     // Neue Kreisgröße
