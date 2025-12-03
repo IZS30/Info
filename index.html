@@ -385,30 +385,43 @@
       const rect = topicsWrap.getBoundingClientRect();
       const cw = rect.width;
       const ch = rect.height;
-      const centerX = cw/2;
-      const centerY = ch/2;
-      const radius = Math.min(cw, ch) * 0.45;
 
-      topics.forEach((t,i) => {
-        const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
-        const x = centerX + radius * Math.cos(angle);
-        const y = centerY + radius * Math.sin(angle);
+  // KORREKTUR: Mittelpunkt nach Rotation stabilisieren
+      const centerX = cw / 2;
+      const centerY = ch / 2;
 
-        const btn = document.createElement('button');
-        btn.className = 'topic-circle';
-        btn.type = 'button';
-        btn.style.left = `${x}px`;
-        btn.style.top = `${y}px`;
-        btn.style.transform = 'translate(-50%,-50%)';
+  // KORREKTUR: Radius reduzieren, damit Kreise NIE überlappen (auch mit Skalierung)
+      const radius = Math.min(cw, ch) * 0.36;
 
-        btn.innerHTML = currentLang==='ar'
-          ? `<div style="direction:rtl">${t.arTitle}</div>`
-          : `<div>${t.deTitle}</div>`;
+  // KORREKTUR: Kreisgröße dynamisch anpassen
+      const circleSize = Math.min(cw, ch) * 0.22;
 
-        btn.addEventListener('click', ()=> openModal(t));
-        topicsWrap.appendChild(btn);
-      });
-    }
+    topics.forEach((t, i) => {
+      const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
+      const x = centerX + radius * Math.cos(angle);
+      const y = centerY + radius * Math.sin(angle);
+
+      const btn = document.createElement('button');
+      btn.className = 'topic-circle';
+      btn.type = 'button';
+
+    // Neue Kreisgröße
+      btn.style.width = `${circleSize}px`;
+      btn.style.height = `${circleSize}px`;
+
+      btn.style.left = `${x}px`;
+      btn.style.top = `${y}px`;
+      btn.style.transform = 'translate(-50%,-50%)';
+
+      btn.innerHTML = currentLang==='ar'
+        ? `<div style="direction:rtl">${t.arTitle}</div>`
+        : `<div>${t.deTitle}</div>`;
+
+      btn.addEventListener('click', () => openModal(t));
+       topicsWrap.appendChild(btn);
+  });
+}
+
 
     /* -----------------------------
        AUTO ROTATE: robust counter-rotation + scaling
