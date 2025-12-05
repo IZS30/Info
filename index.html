@@ -366,22 +366,22 @@ function openTopics(lang){
 /* --------------------------------------------------------------------------------
    ⭐ NEUE VERSION: Größere Kreise, kleinerer Radius, perfekte Zentrierung gedreht
 ----------------------------------------------------------------------------------- */
-function renderTopicCircles(){
+  function renderTopicCircles(){
   topicsWrap.innerHTML = '';
 
-  const rect = topicsWrap.getBoundingClientRect();
-  const cw = rect.width;
-  const ch = rect.height;
+  /* FIX: stabile Maße, unabhängig von Rotation */
+  const cw = topicsWrap.clientWidth;   // FIX: statt rect.width
+  const ch = topicsWrap.clientHeight;  // FIX: statt rect.height
 
-  /* Mittelpunkt absolut zentriert – funktioniert nach Rotation */
+  /* Mittelpunkt absolut zentriert */
   const centerX = cw / 2;
   const centerY = ch / 2;
 
-  /* Radius verkleinert (vorher 0.60 → jetzt 0.45 = engerer Kreisring) */
+  /* Radius */
   const radius = Math.min(cw, ch) * 0.45;
 
-  /* Kreisgröße → +120% größer als vorher */
-  const circleSize = Math.min(cw, ch) * 0.33;  /* vorher 0.22 */
+  /* Kreisgröße -> größer */
+  const circleSize = Math.min(cw, ch) * 0.33;
 
   topics.forEach((t, i) => {
     const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
@@ -392,11 +392,8 @@ function renderTopicCircles(){
     const btn = document.createElement('button');
     btn.className = 'topic-circle';
 
-    /* neue Größe */
     btn.style.width = `${circleSize}px`;
     btn.style.height = `${circleSize}px`;
-
-    /* größere Schrift */
     btn.style.fontSize = (circleSize * 0.18) + "px";
 
     btn.type = 'button';
