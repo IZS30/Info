@@ -363,25 +363,27 @@ function openTopics(lang){
   renderTopicCircles();
 }
 
-/* --------------------------------------------------------------------------------
-   ⭐ NEUE VERSION: Größere Kreise, kleinerer Radius, perfekte Zentrierung gedreht
------------------------------------------------------------------------------------ */
-  function renderTopicCircles(){
+/* ------------------------------------------------------------
+   ⭐ ERWEITERT: +100% Größe im Landscape-Modus (Themen-Seite)
+------------------------------------------------------------- */
+function renderTopicCircles(){
   topicsWrap.innerHTML = '';
 
-  /* FIX: stabile Maße, unabhängig von Rotation */
-  const cw = topicsWrap.clientWidth;   // FIX: statt rect.width
-  const ch = topicsWrap.clientHeight;  // FIX: statt rect.height
+  const cw = topicsWrap.clientWidth;
+  const ch = topicsWrap.clientHeight;
 
-  /* Mittelpunkt absolut zentriert */
+  /* 👉 Erkennung: verdrehtes Gerät */
+  const isLandscape = window.innerWidth > window.innerHeight;
+
+  /* 👉 Wenn Landscape → alles ×2 (+100%) */
+  const scaleBoost = isLandscape ? 2 : 1;
+
   const centerX = cw / 2;
   const centerY = ch / 2;
 
-  /* Radius */
-  const radius = Math.min(cw, ch) * 0.45;
-
-  /* Kreisgröße -> größer */
-  const circleSize = Math.min(cw, ch) * 0.33;
+  /* radius + circleSize → dynamisch vergrößert */
+  const radius = Math.min(cw, ch) * 0.45 * scaleBoost;
+  const circleSize = Math.min(cw, ch) * 0.33 * scaleBoost;
 
   topics.forEach((t, i) => {
     const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
