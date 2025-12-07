@@ -385,8 +385,8 @@ function renderTopicCircles(){
   const centerY = ch / 2;
 
   /* radius + circleSize → dynamisch vergrößert */
-  const radius = Math.min(cw, ch) * 0.45 * scaleBoost;
-  const circleSize = Math.min(cw, ch) * 0.33 * scaleBoost;
+  const radius = Math.min(cw, ch) * 0.44 * scaleBoost;
+  const circleSize = Math.min(cw, ch) * 0.33 * scaleBoost * 0.98;
 
   topics.forEach((t, i) => {
     const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
@@ -399,7 +399,7 @@ function renderTopicCircles(){
 
     btn.style.width = `${circleSize}px`;
     btn.style.height = `${circleSize}px`;
-    btn.style.fontSize = (circleSize * 0.18) + "px";
+    btn.style.fontSize = (circleSize * 0.17) + "px";
 
     btn.type = 'button';
     btn.style.left = `${x}px`;
