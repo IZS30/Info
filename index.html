@@ -109,7 +109,7 @@
     .topics-wrap{
       width:100%;
       max-width:880px;
-      height: calc(100vh - 240px); 
+      height: calc(100vh - 80px) !important; 
       position:relative;
       margin:0 auto;
       display:flex;
@@ -319,6 +319,7 @@ backBtn.addEventListener('click', () => {
   document.documentElement.lang = 'de';
   currentLang = null;
   topicsWrap.innerHTML = '';
+  topicsWrap.classList.add('expanded-height');
 });
 
 /* --- MODAL HANDLING --- */
