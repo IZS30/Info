@@ -184,7 +184,11 @@
 
     .modal.open{ transform:translateY(0) scale(1); opacity:1; }
     .modal h3{ margin:0 0 10px 0; font-size:20px; }
-    .modal p{ margin:0; font-size:22px; line-height:1.55; opacity:0.95; }
+    #modalContent {
+    font-size: 22px !important;
+    line-height: 1.55 !important;
+    opacity: 0.98;
+    }
 
     .modal-close{
       position:absolute;
@@ -379,7 +383,7 @@ function renderTopicCircles(){
   const isLandscape = window.innerWidth > window.innerHeight;
 
   /* 👉 Wenn Landscape → alles ×2 (+100%) */
-  const scaleBoost = isLandscape ? 2 : 1;
+  const scaleBoost = isLandscape ? 1.8 : 1;
 
   const centerX = cw / 2;
   const centerY = ch / 2;
