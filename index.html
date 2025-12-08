@@ -184,7 +184,7 @@
 
     .modal.open{ transform:translateY(0) scale(1); opacity:1; }
     .modal h3{ margin:0 0 10px 0; font-size:20px; }
-    .modal p{ margin:0; font-size:15px; line-height:1.45; opacity:0.95; }
+    .modal p{ margin:0; font-size:22px; line-height:1.55; opacity:0.95; }
 
     .modal-close{
       position:absolute;
@@ -279,7 +279,7 @@ const topics = [
   },
   {
     id:4, deTitle:"Vorträge des Imams", arTitle:"محاضرات الإمام",
-    deInfo:"Die Vorträge finden sonntags nach dem Salat Al-‘Asr statt (nur auf Arabisch).",
+    deInfo:"Die Vorträge finden sonntags nach Salat Al-‘Asr statt (nur auf Arabisch).",
     arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر مباشرة (باللغة العربية فقط)."
   },
   {
@@ -399,7 +399,10 @@ function renderTopicCircles(){
 
     btn.style.width = `${circleSize}px`;
     btn.style.height = `${circleSize}px`;
-    btn.style.fontSize = (circleSize * 0.164) + "px";
+    // Schriftgröße im Kreis fest begrenzen, egal ob DE oder AR
+    const fontModifier = currentLang === 'ar' ? 0.164 : 0.147;
+    btn.style.fontSize = (circleSize * fontModifier) + "px";
+
 
     btn.type = 'button';
     btn.style.left = `${x}px`;
