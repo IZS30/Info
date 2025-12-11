@@ -1,296 +1,209 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Hilfe-Portal — DE / AR</title>
-  <style>
-    :root{
-      --bg-black:#000;
-      --accent-green:#0f3d2e;
-      --white: #fff;
-      --border-black:#000;
-    }
-    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow: visible !important;}
-    body{
-      min-height:100%;
-      background-color:var(--bg-black);
-      background-image:
-        radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
-        radial-gradient(rgba(255,255,255,0.6) 0.6px, transparent 0.6px);
-      background-size:20px 20px, 40px 40px;
-      background-position: 0 0, 10px 20px;
-      color:var(--white);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hilfe-Portal — DE / AR</title>
 
-    .rotate-wrapper{
-      position:fixed;
-      inset:0;
-      width:100vw;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      transform-origin:center center;
-      transition: transform 0.28s ease;
-      background: transparent;
-      overflow: visible !important;;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      -webkit-transform-style: preserve-3d;
-      transform-style: preserve-3d;
-    }
+<style>
+:root{
+  --bg-black:#000;
+  --accent-green:#0f3d2e;
+  --white: #fff;
+  --border-black:#000;
+}
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow: visible !important;}
+body{
+  min-height:100%;
+  background-color:var(--bg-black);
+  background-image:
+    radial-gradient(rgba(255,255,255,0.95) 1px, transparent 1px),
+    radial-gradient(rgba(255,255,255,0.6) 0.6px, transparent 0.6px);
+  background-size:20px 20px, 40px 40px;
+  background-position: 0 0, 10px 20px;
+  color:var(--white);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.rotate-wrapper{
+  position:fixed; inset:0; width:100vw; height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  transform-origin:center center;
+  transition: transform 0.28s ease;
+  background: transparent;
+  overflow: visible !important;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+#innerContainer { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
 
-    #innerContainer {
-      width:100%;
-      height:100%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
+.center {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  padding:24px; box-sizing:border-box; text-align:center; flex-direction:column;
+}
+h1.title{
+  font-size:clamp(28px,6vw,56px); margin:0 0 18px 0; letter-spacing:0.5px; font-weight:700;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+.cta-block{max-width:760px;width:100%;}
+.cta { display:flex; gap:18px; align-items:center; justify-content:center; margin:18px 0; flex-direction:column; }
+.cta p{ margin:0; font-size:23px; }
 
-    .center {
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-      box-sizing:border-box;
-      text-align:center;
-      flex-direction:column;
-    }
+.btn-circle{
+  width:150px; height:150px; border-radius:999px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:600; cursor:pointer; user-select:none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  border:3px solid var(--border-black);
+  background:var(--accent-green); color:var(--white);
+  transition: transform .15s ease, box-shadow .15s; font-size:20px;
+}
+.btn-circle:active{ transform: scale(.98); }
+.btn-circle:hover{ transform: scale(1.04); }
 
-    h1.title{
-      font-size:clamp(28px,6vw,56px);
-      margin:0 0 18px 0;
-      letter-spacing:0.5px;
-      font-weight:700;
-      text-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    }
+.topics-wrap{
+  width:100%; max-width:880px;
+  height: calc(100vh - 80px) !important;
+  position:relative; margin:0 auto;
+  display:flex; align-items:center; justify-content:center;
+  overflow:visible;
+}
+.topic-circle{
+  position:absolute; border-radius:999px;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; box-sizing:border-box;
+  font-weight:600; cursor:pointer;
+  border:3px solid var(--border-black);
+  background:var(--accent-green); color:var(--white);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
+}
+.topic-circle:hover{ transform: scale(1.06); z-index:30; }
 
-    .cta-block{max-width:760px;width:100%;}
+.topbar{
+  width:100%; max-width:760px; display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:14px; padding:0 6px; box-sizing:border-box;
+}
+.link-back{
+  color:var(--white); text-decoration:underline; cursor:pointer;
+  font-size:20px; background:transparent; border:none; padding:6px;
+}
 
-    .cta {
-      display:flex;
-      gap:18px;
-      align-items:center;
-      justify-content:center;
-      margin:18px 0;
-      flex-direction:column;
-    }
+.modal-overlay{
+  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+  z-index:1000; background:rgba(0,0,0,0.6);
+}
+.modal{
+  width:100%; max-width:720px; border-radius:16px;
+  padding:20px; box-sizing:border-box;
+  background:var(--accent-green); border:3px solid var(--border-black);
+  color:var(--white);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  transform: translateY(8px) scale(.98); opacity:0;
+  transition: all 200ms ease;
+}
+.modal.open{ transform:translateY(0) scale(1); opacity:1; }
+.modal h3{ margin:0 0 10px 0; font-size:24px; }
+#modalContent { font-size: 22px !important; line-height: 1.55 !important; opacity: 0.98; }
 
-    .cta p{
-      margin:0;
-      font-size:23px;
-    }
+.modal-close{
+  position:absolute; right:12px; top:12px; width:36px;height:36px;
+  border-radius:999px; background:var(--white); color:var(--border-black);
+  display:inline-flex;align-items:center;justify-content:center;
+  border:none;cursor:pointer;font-weight:700;
+  box-shadow:0 6px 14px rgba(0,0,0,0.5);
+}
 
-    .btn-circle{
-      width:150px;
-      height:150px;
-      border-radius:999px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      font-weight:600;
-      cursor:pointer;
-      user-select:none;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      border:3px solid var(--border-black);
-      background:var(--accent-green);
-      color:var(--white);
-      transition: transform .15s ease, box-shadow .15s;
-      font-size:20px;
-    }
-    .btn-circle:active{ transform: scale(.98); }
-    .btn-circle:hover{ transform: scale(1.04); }
+footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:14px; }
 
-    .topics-wrap{
-      width:100%;
-      max-width:880px;
-      height: calc(100vh - 80px) !important; 
-      position:relative;
-      margin:0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:visible;
-  }
-
-
-    .topic-circle{
-      position:absolute;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      box-sizing:border-box;
-      font-weight:600;
-      cursor:pointer;
-      border:3px solid var(--border-black);
-      background:var(--accent-green);
-      color:var(--white);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
-    }
-    .topic-circle:hover{ transform: scale(1.06); z-index:30; }
-
-    .topbar{
-      width:100%;
-      max-width:760px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:14px;
-      padding:0 6px;
-      box-sizing:border-box;
-    }
-    .link-back{
-      color:var(--white);
-      text-decoration:underline;
-      cursor:pointer;
-      font-size:20px;
-      background:transparent;
-      border:none;
-      padding:6px;
-    }
-
-    .modal-overlay{
-      position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:1000;
-      background:rgba(0,0,0,0.6);
-    }
-    .modal{
-      width:100%;
-      max-width:720px;
-      border-radius:16px;
-      padding:20px;
-      box-sizing:border-box;
-      background:var(--accent-green);
-      border:3px solid var(--border-black);
-      color:var(--white);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-      transform: translateY(8px) scale(.98);
-      opacity:0;
-      transition: all 200ms ease;
-    }
-    #modalContent img {
-      display: block;
-      margin: 12px auto;
-      max-width: 80%;
-      height: auto;
-    }
-
-    .modal.open{ transform:translateY(0) scale(1); opacity:1; }
-    .modal h3{ margin:0 0 10px 0; font-size:24px; }
-    #modalContent {
-    font-size: 22px !important;
-    line-height: 1.55 !important;
-    opacity: 0.98;
-    }
-
-    .modal-close{
-      position:absolute;
-      right:12px;
-      top:12px;
-      width:36px;height:36px;border-radius:999px;
-      background:var(--white);
-      color:var(--border-black);
-      display:inline-flex;align-items:center;justify-content:center;
-      border:none;cursor:pointer;font-weight:700;
-      box-shadow:0 6px 14px rgba(0,0,0,0.5);
-    }
-
-    footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:14px; }
-
-    @media (max-width:540px){
-      .btn-circle{ width:200px;height:200px;font-size:18px; }
-      .topic-circle{ font-size:24px; }
-      .topics-wrap{ height:340px; }
-    }
-  </style>
+@media (max-width:540px){
+  .btn-circle{ width:200px;height:200px;font-size:18px; }
+  .topic-circle{ font-size:24px; }
+  .topics-wrap{ height:340px; }
+}
+</style>
 </head>
 
 <body>
+<div id="rotateWrap" class="rotate-wrapper">
+<div id="innerContainer">
 
-  <div id="rotateWrap" class="rotate-wrapper">
-    <div id="innerContainer">
-      <main id="app" class="center" aria-live="polite">
+<main id="app" class="center">
 
-        <!-- HOME -->
-        <section id="homeView" class="center" style="display:flex;">
-          <div class="cta-block">
-            <h1 class="title">Auskunft über IZS?</h1>
+<!-- HOME -->
+<section id="homeView" class="center" style="display:flex;">
+  <div class="cta-block">
+    <h1 class="title">Auskunft über IZS?</h1>
 
-            <div class="cta">
-              <p>Auskunft über IZS auf <strong>Deutsch</strong>? – hier klicken</p>
-              <button id="btn-de" class="btn-circle">hier klicken</button>
-            </div>
-
-            <div class="cta" style="margin-top:14px;" dir="rtl">
-              <p style="direction:rtl;margin-bottom:8px;font-size:24px;">معلومات حول المركز باللغة <strong>العربية</strong؟ — اضغط هنا</p>
-              <button id="btn-ar" class="btn-circle">اضغط هنا</button>
-            </div>
-          </div>
-
-          <footer>© <span id="year"></span> – Hilfe-Portal</footer>
-        </section>
-
-        <!-- THEMEN -->
-        <section id="topicsView" style="display:none;width:100%;max-width:980px;">
-          <div class="topbar">
-            <button id="backBtn" class="link-back">← Zurück</button>
-            <h2 id="topicsTitle" style="margin:0;font-size:20px;font-weight:600;"></h2>
-            <div style="width:48px;"></div>
-          </div>
-
-          <div class="topics-wrap" id="topicsWrap"></div>
-
-          <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">Wähle ein Thema, um mehr zu erfahren</footer>
-        </section>
-
-      </main>
+    <div class="cta">
+      <p>Auskunft über IZS auf <strong>Deutsch</strong>? – hier klicken</p>
+      <button id="btn-de" class="btn-circle">hier klicken</button>
     </div>
 
-    <!-- MODAL -->
-    <div id="modalOverlay" class="modal-overlay">
-      <div id="modalBox" class="modal">
-        <button id="closeModal" class="modal-close">✕</button>
-        <h3 id="modalTitle"></h3>
-        <div id="modalContent" style="margin-top:8px;"></div>
-      </div>
+    <div class="cta" style="margin-top:14px;" dir="rtl">
+      <p style="direction:rtl;margin-bottom:8px;font-size:24px;">معلومات حول المركز باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+      <button id="btn-ar" class="btn-circle">اضغط هنا</button>
     </div>
-
   </div>
 
+  <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+</section>
+
+<!-- THEMEN -->
+<section id="topicsView" style="display:none;width:100%;max-width:980px;">
+  <div class="topbar">
+    <button id="backBtn" class="link-back">← Zurück</button>
+    <h2 id="topicsTitle" style="margin:0;font-size:20px;font-weight:600;"></h2>
+    <div style="width:48px;"></div>
+  </div>
+
+  <div class="topics-wrap" id="topicsWrap"></div>
+
+  <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">
+    Wähle ein Thema, um mehr zu erfahren
+  </footer>
+</section>
+
+</main>
+</div>
+
+<!-- MODAL -->
+<div id="modalOverlay" class="modal-overlay">
+  <div id="modalBox" class="modal">
+    <button id="closeModal" class="modal-close">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div id="modalContent" style="margin-top:8px;"></div>
+  </div>
+</div>
+
+</div>
 
 <script>
 /* --- THEMEN-DATEN --- */
 const topics = [
   {
-    id:1, deTitle:"Islamische Eheschließung (Nikah)", arTitle:"الزواج الإسلامي (النكاح)",
-    deInfo:"Sie brauchen folgende Unterlagen:<br>1- Erweiterte Meldebescheinigung (vom Rathaus),<br>2- Kopie der Ausweise beider Partner.<br><br>Dann können Sie einen Termin per Email Vereinbaren: info@iz-stuttgart.de",
-    arInfo:" لإجراء عقد الزواج الإسلامي يجب إحضار:<br>  شهادة السكن الموسعة (Erweiterte Meldebescheinigung vom Rathaus) <br>ونسخ من بطاقات الهوية لكلا الزوجين.<br><br> بعد ذلك يمكن ترتيب موعد عن طريق الإيميل: info@iz-stuttgart.de "
+    id:1,
+    deTitle:"Islamische Eheschließung (Nikah)",
+    arTitle:"الزواج الإسلامي (النكاح)",
+    deInfo:
+      "Sie brauchen folgende Unterlagen:<br>1- Erweiterte Meldebescheinigung (vom Rathaus),<br>2- Kopie der Ausweise beider Partner.<br><br>Dann können Sie einen Termin per Email vereinbaren: info@iz-stuttgart.de",
+    arInfo:
+      "لإجراء عقد الزواج الإسلامي يجب إحضار:<br> شهادة السكن الموسعة (Erweiterte Meldebescheinigung vom Rathaus) <br>ونسخ من بطاقات الهوية لكلا الزوجين.<br><br> بعد ذلك يمكن ترتيب موعد عن طريق الإيميل: info@iz-stuttgart.de "
   },
-  {
-    id:2, deTitle:"Arabisch lernen für Kinder", arTitle:"تعليم اللغة العربية للأطفال",
-    deInfo:"Anmeldung erforderlich. Sie erreichen uns unter: 017684425320 (WhatsApp) ", arInfo:"التسجيل مطلوب, للتواصل:  (WhatsApp) 017684425320"
-  },
-  {
-    id:3, deTitle:"Quran lernen für Kinder", arTitle:"تعليم القرآن الكريم للأطفال",
-    deInfo:"Anmeldung erforderlich. Sie erreichen uns unter: 01716260309 (WhatsApp)", arInfo:"التسجيل مطلوب, للتواصل: (WhatsApp) 017684425320"
-  },
-  {
-    id:4, deTitle:"Vorträge des Imams", arTitle:"محاضرات الإمام",
+  { id:2, deTitle:"Arabisch lernen für Kinder", arTitle:"تعليم اللغة العربية للأطفال",
+    deInfo:"Anmeldung erforderlich. Sie erreichen uns unter: (WhatsApp) ",
+    arInfo:"التسجيل مطلوب, للتواصل: (WhatsApp) " },
+  { id:3, deTitle:"Quran lernen für Kinder", arTitle:"تعليم القرآن الكريم للأطفال",
+    deInfo:"Anmeldung erforderlich. Sie erreichen uns unter: (WhatsApp)",
+    arInfo:"التسجيل مطلوب, للتواصل: (WhatsApp) " },
+  { id:4, deTitle:"Vorträge des Imams", arTitle:"محاضرات الإمام",
     deInfo:"Die Vorträge finden sonntags nach Salat Al-‘Asr statt (nur auf Arabisch).",
-    arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر مباشرة (باللغة العربية فقط)."
-  },
-  {
-    id:5, deTitle:"Fragen / Kontakt zum Imam", arTitle:"أسئلة / تواصل مع الإمام",
+    arInfo:"تقام المحاضرات كل يوم أحد بعد صلاة العصر مباشرة (باللغة العربية فقط)." },
+  { id:5, deTitle:"Fragen / Kontakt zum Imam", arTitle:"أسئلة / تواصل مع الإمام",
     deInfo:"Email: info@iz-stuttgart.de",
-    arInfo:"البريد الإلكتروني: info@iz-stuttgart.de"
-  }
+    arInfo:"البريد الإلكتروني: info@iz-stuttgart.de" }
 ];
 
 /* Shortcuts */
@@ -302,7 +215,6 @@ const backBtn = document.getElementById('backBtn');
 const yearSpan = document.getElementById('year');
 const btnDe = document.getElementById('btn-de');
 const btnAr = document.getElementById('btn-ar');
-
 const modalOverlay = document.getElementById('modalOverlay');
 const modalBox = document.getElementById('modalBox');
 const modalTitle = document.getElementById('modalTitle');
@@ -312,7 +224,7 @@ const closeModal = document.getElementById('closeModal');
 let currentLang = null;
 yearSpan.textContent = new Date().getFullYear();
 
-/* --- BUTTONS --- */
+/* --- Button Events --- */
 btnDe.addEventListener('click', () => openTopics('de'));
 btnAr.addEventListener('click', () => openTopics('ar'));
 
@@ -323,106 +235,193 @@ backBtn.addEventListener('click', () => {
   document.documentElement.lang = 'de';
   currentLang = null;
   topicsWrap.innerHTML = '';
-  topicsWrap.classList.add('expanded-height');
 });
 
-/* --- MODAL HANDLING --- */
+/* --- MODAL --- */
 function openModal(topic) {
   const isAR = currentLang === 'ar';
   modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
-  modalContent.innerHTML = isAR
+
+  let html = isAR
     ? `<div dir="rtl">${topic.arInfo}</div>`
-    : `<div>${topic.deInfo}</div>`;
+    : `<div>${topic.deInfo}<br><br><strong>Haben Sie diese Unterlagen schon?</strong></div>`;
+
+  /* Nikah → Formular anhängen */
+  if (!isAR && topic.id === 1) {
+    html += `
+      <form id="nikahForm" action="https://formsubmit.co/el/cijefo" method="POST" style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">
+
+        <input type="hidden" name="_subject" value="Termin - Islamische Eheschließung">
+        <input type="hidden" name="_captcha" value="false">
+
+        <label>
+          Name*:
+          <input type="text" name="Name" id="f_name" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+        </label>
+
+        <label>
+          Email:
+          <input type="email" name="Email" id="f_email" style="width:100%;padding:8px;border-radius:6px;border:none;">
+        </label>
+
+        <label>
+          Telefonnummer:
+          <input type="text" name="Telefon" id="f_tel" style="width:100%;padding:8px;border-radius:6px;border:none;">
+        </label>
+
+        <label>
+          Zeit bevorzugt*:
+          <select name="Zeit" id="f_time" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+            <option value="">Bitte wählen</option>
+            <option value="Vormittag">Vormittag</option>
+            <option value="Nachmittag">Nachmittag</option>
+            <option value="Immer">Immer</option>
+          </select>
+        </label>
+
+        <label>
+          Tag bevorzugt*:
+          <select name="Tag" id="f_day" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+            <option value="">Bitte wählen</option>
+            <option value="Montag">Montag</option>
+            <option value="Dienstag">Dienstag</option>
+            <option value="Mittwoch">Mittwoch</option>
+            <option value="Donnerstag">Donnerstag</option>
+            <option value="Freitag">Freitag</option>
+            <option value="Samstag">Samstag</option>
+            <option value="Sonntag">Sonntag</option>
+            <option value="Immer">Immer</option>
+          </select>
+        </label>
+
+        <label>
+          Nachricht (optional):
+          <textarea name="Nachricht" style="width:100%;padding:8px;border-radius:6px;border:none;min-height:90px;"></textarea>
+        </label>
+
+        <button type="submit" style="padding:12px;border-radius:8px;border:none;background:#fff;color:#000;font-weight:700;cursor:pointer;">
+          Termin anfragen
+        </button>
+
+      </form>
+
+      <script>
+        document.getElementById('nikahForm').addEventListener('submit', function(e){
+          const name = document.getElementById('f_name').value.trim();
+          const email = document.getElementById('f_email').value.trim();
+          const tel = document.getElementById('f_tel').value.trim();
+          const time = document.getElementById('f_time').value;
+          const day = document.getElementById('f_day').value;
+
+          if(!name){
+            alert("Bitte Name eingeben.");
+            e.preventDefault(); return;
+          }
+          if(email === "" && tel === ""){
+            alert("Bitte Email ODER Telefonnummer eingeben.");
+            e.preventDefault(); return;
+          }
+          if(time === ""){
+            alert("Bitte bevorzugte Zeit wählen.");
+            e.preventDefault(); return;
+          }
+          if(day === ""){
+            alert("Bitte bevorzugten Tag wählen.");
+            e.preventDefault(); return;
+          }
+        });
+      <\/script>
+    `;
+  }
+
+  modalContent.innerHTML = html;
+
   modalOverlay.style.display = 'flex';
-  requestAnimationFrame(()=> modalBox.classList.add('open'));
+  requestAnimationFrame(() => modalBox.classList.add('open'));
 }
 
 function closeModalIfOpen() {
   if (modalOverlay.style.display === 'flex') {
     modalBox.classList.remove('open');
-    setTimeout(()=>{
+    setTimeout(() => {
       modalOverlay.style.display = 'none';
       modalTitle.textContent = '';
       modalContent.innerHTML = '';
-    },180);
+    }, 180);
   }
 }
 
 closeModal.addEventListener('click', closeModalIfOpen);
-modalOverlay.addEventListener('click', (e)=>{ if(e.target===modalOverlay) closeModalIfOpen(); });
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeModalIfOpen();
+});
 
-/* --- SPRACHE / THEMEN SEITE --- */
-function openTopics(lang){
+/* --- TOPICS VIEW --- */
+function openTopics(lang) {
   currentLang = lang;
+
   homeView.style.display = 'none';
   topicsView.style.display = 'block';
 
   if (lang === 'ar') {
     topicsTitle.textContent = 'اختر موضوعاً';
-    topicsWrap.setAttribute('dir','rtl');
+    topicsWrap.setAttribute('dir', 'rtl');
     document.documentElement.lang = 'ar';
   } else {
     topicsTitle.textContent = 'Themenübersicht';
-    topicsWrap.setAttribute('dir','ltr');
+    topicsWrap.setAttribute('dir', 'ltr');
     document.documentElement.lang = 'de';
   }
 
   renderTopicCircles();
 }
 
-/* ------------------------------------------------------------
-   ⭐ ERWEITERT: +100% Größe im Landscape-Modus (Themen-Seite)
-------------------------------------------------------------- */
-function renderTopicCircles(){
+/* --- RENDER CIRCLES --- */
+function renderTopicCircles() {
   topicsWrap.innerHTML = '';
 
   const cw = topicsWrap.clientWidth;
   const ch = topicsWrap.clientHeight;
 
-  /* 👉 Erkennung: verdrehtes Gerät */
   const isLandscape = window.innerWidth > window.innerHeight;
-
-  /* 👉 Wenn Landscape → alles ×2 (+100%) */
   const scaleBoost = isLandscape ? 1.8 : 1;
 
   const centerX = cw / 2;
   const centerY = ch / 2;
 
-  /* radius + circleSize → dynamisch vergrößert */
   const radius = Math.min(cw, ch) * 0.44 * scaleBoost;
   const circleSize = Math.min(cw, ch) * 0.33 * scaleBoost * 0.98;
 
   topics.forEach((t, i) => {
-    const angle = (i / topics.length) * Math.PI * 2 - Math.PI/2;
-
+    const angle = (i / topics.length) * Math.PI * 2 - Math.PI / 2;
     const x = centerX + radius * Math.cos(angle);
     const y = centerY + radius * Math.sin(angle);
 
     const btn = document.createElement('button');
     btn.className = 'topic-circle';
-
     btn.style.width = `${circleSize}px`;
     btn.style.height = `${circleSize}px`;
-    // Schriftgröße im Kreis fest begrenzen, egal ob DE oder AR
+
     const fontModifier = currentLang === 'ar' ? 0.170 : 0.130;
     btn.style.fontSize = (circleSize * fontModifier) + "px";
-
 
     btn.type = 'button';
     btn.style.left = `${x}px`;
     btn.style.top = `${y}px`;
     btn.style.transform = 'translate(-50%,-50%)';
 
-    btn.innerHTML = currentLang==='ar'
-      ? `<div style="direction:rtl">${t.arTitle}</div>`
-      : `<div>${t.deTitle}</div>`;
+    btn.innerHTML =
+      currentLang === 'ar'
+        ? `<div style="direction:rtl">${t.arTitle}</div>`
+        : `<div>${t.deTitle}</div>`;
 
     btn.addEventListener('click', () => openModal(t));
+
     topicsWrap.appendChild(btn);
   });
 }
 
-/* --- AUTO ROTATION (unverändert außer Zentrier-Fix oben) --- */
+/* --- AUTO ROTATION --- */
 (function setupAutoRotation(){
   const wrap = document.getElementById('rotateWrap');
   const inner = document.getElementById('innerContainer');
@@ -437,7 +436,6 @@ function renderTopicCircles(){
     } else {
       angle = (window.innerWidth >= window.innerHeight) ? 90 : 0;
     }
-
     angle = ((angle % 360) + 360) % 360;
     const rotation = -angle;
 
@@ -470,6 +468,7 @@ function renderTopicCircles(){
   }
 
   applyTransform();
+
   window.addEventListener('orientationchange', scheduleApply, {passive:true});
   window.addEventListener('resize', scheduleApply);
 
@@ -478,10 +477,9 @@ function renderTopicCircles(){
   }
 })();
 
-/* --- Re-render Topics nach Rotation --- */
 window.addEventListener('resize', () => {
   clearTimeout(window._renderTopicTimeout);
-  window._renderTopicTimeout = setTimeout(()=> {
+  window._renderTopicTimeout = setTimeout(() => {
     if (currentLang) renderTopicCircles();
   }, 240);
 });
