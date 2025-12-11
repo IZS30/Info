@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Hilfe-Portal — DE / AR</title>
+<title>Hilfe-Portal — DE / AR (ohne Rotation)</title>
 
 <style>
 :root{
@@ -12,7 +12,7 @@
   --white: #fff;
   --border-black:#000;
 }
-html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;overflow: visible !important;}
+html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
 body{
   min-height:100%;
   background-color:var(--bg-black);
@@ -24,31 +24,17 @@ body{
   color:var(--white);
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  overflow:auto;
 }
-.rotate-wrapper{
-  position:fixed; inset:0; width:100vw; height:100vh;
-  display:flex; align-items:center; justify-content:center;
-  transform-origin:center center;
-  transition: transform 0.28s ease;
-  background: transparent;
-  overflow: visible !important;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
-}
-#innerContainer { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
 
-.center {
-  min-height:100vh; display:flex; align-items:center; justify-content:center;
-  padding:24px; box-sizing:border-box; text-align:center; flex-direction:column;
-}
-h1.title{
-  font-size:clamp(28px,6vw,56px); margin:0 0 18px 0; letter-spacing:0.5px; font-weight:700;
-  text-shadow: 0 6px 18px rgba(0,0,0,0.6);
-}
+/* Layout */
+#app { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; box-sizing:border-box; }
+.center { text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; max-width:980px; width:100%; }
+
+/* Typography / Controls */
+h1.title{ font-size:clamp(28px,6vw,56px); margin:0 0 6px 0; letter-spacing:0.5px; font-weight:700; text-shadow: 0 6px 18px rgba(0,0,0,0.6); }
 .cta-block{max-width:760px;width:100%;}
-.cta { display:flex; gap:18px; align-items:center; justify-content:center; margin:18px 0; flex-direction:column; }
+.cta { display:flex; gap:18px; align-items:center; justify-content:center; flex-direction:column; }
 .cta p{ margin:0; font-size:23px; }
 
 .btn-circle{
@@ -63,10 +49,11 @@ h1.title{
 .btn-circle:active{ transform: scale(.98); }
 .btn-circle:hover{ transform: scale(1.04); }
 
+/* Topics */
 .topics-wrap{
   width:100%; max-width:880px;
-  height: calc(100vh - 80px) !important;
-  position:relative; margin:0 auto;
+  height: calc(70vh);
+  position:relative; margin:12px auto;
   display:flex; align-items:center; justify-content:center;
   overflow:visible;
 }
@@ -79,34 +66,25 @@ h1.title{
   background:var(--accent-green); color:var(--white);
   box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   transition: transform .18s cubic-bezier(.2,.9,.3,1), opacity .2s;
+  padding:8px;
 }
 .topic-circle:hover{ transform: scale(1.06); z-index:30; }
 
-.topbar{
-  width:100%; max-width:760px; display:flex; justify-content:space-between;
-  align-items:center; margin-bottom:14px; padding:0 6px; box-sizing:border-box;
-}
-.link-back{
-  color:var(--white); text-decoration:underline; cursor:pointer;
-  font-size:20px; background:transparent; border:none; padding:6px;
-}
+/* Topbar + Modal */
+.topbar{ width:100%; max-width:760px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding:0 6px; box-sizing:border-box; }
+.link-back{ color:var(--white); text-decoration:underline; cursor:pointer; font-size:20px; background:transparent; border:none; padding:6px; }
 
 .modal-overlay{
-  position:fixed;inset:0;display:none;align-items:center;justify-content:center;
-  z-index:1000; background:rgba(0,0,0,0.6);
+  position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1000; background:rgba(0,0,0,0.6);
 }
 .modal{
-  width:100%; max-width:720px; border-radius:16px;
-  padding:20px; box-sizing:border-box;
-  background:var(--accent-green); border:3px solid var(--border-black);
-  color:var(--white);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  transform: translateY(8px) scale(.98); opacity:0;
-  transition: all 200ms ease;
+  width:100%; max-width:720px; border-radius:16px; padding:20px; box-sizing:border-box;
+  background:var(--accent-green); border:3px solid var(--border-black); color:var(--white);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6); transform: translateY(8px) scale(.98); opacity:0; transition: all 200ms ease;
 }
 .modal.open{ transform:translateY(0) scale(1); opacity:1; }
 .modal h3{ margin:0 0 10px 0; font-size:24px; }
-#modalContent { font-size: 22px !important; line-height: 1.55 !important; opacity: 0.98; }
+#modalContent { font-size: 20px; line-height: 1.55; opacity: 0.98; }
 
 .modal-close{
   position:absolute; right:12px; top:12px; width:36px;height:36px;
@@ -116,72 +94,75 @@ h1.title{
   box-shadow:0 6px 14px rgba(0,0,0,0.5);
 }
 
+/* Form fields basic style */
+input[type="text"], input[type="email"], select, textarea {
+  width:100%; padding:8px; border-radius:6px; border:none; box-sizing:border-box;
+}
+label { display:block; font-size:16px; text-align:left; color:var(--white); }
+
+/* Footer */
 footer { margin-top:18px; color: rgba(255,255,255,0.6); font-size:14px; }
 
-@media (max-width:540px){
-  .btn-circle{ width:200px;height:200px;font-size:18px; }
-  .topic-circle{ font-size:24px; }
-  .topics-wrap{ height:340px; }
+/* Responsive tweaks */
+@media (max-width:700px){
+  .topics-wrap{ height:420px; }
+  .btn-circle{ width:180px;height:180px;font-size:18px; }
 }
 </style>
 </head>
 
 <body>
-<div id="rotateWrap" class="rotate-wrapper">
-<div id="innerContainer">
+  <div id="app">
+    <main class="center" aria-live="polite">
 
-<main id="app" class="center">
+      <!-- HOME -->
+      <section id="homeView" style="display:flex;flex-direction:column;align-items:center;">
+        <div class="cta-block">
+          <h1 class="title">Auskunft über IZS?</h1>
 
-<!-- HOME -->
-<section id="homeView" class="center" style="display:flex;">
-  <div class="cta-block">
-    <h1 class="title">Auskunft über IZS?</h1>
+          <div class="cta">
+            <p>Auskunft über IZS auf <strong>Deutsch</strong>? – hier klicken</p>
+            <button id="btn-de" class="btn-circle">hier klicken</button>
+          </div>
 
-    <div class="cta">
-      <p>Auskunft über IZS auf <strong>Deutsch</strong>? – hier klicken</p>
-      <button id="btn-de" class="btn-circle">hier klicken</button>
+          <div class="cta" style="margin-top:14px;" dir="rtl">
+            <p style="direction:rtl;margin-bottom:8px;font-size:24px;">معلومات حول المركز باللغة <strong>العربية</strong؟ — اضغط هنا</p>
+            <button id="btn-ar" class="btn-circle">اضغط هنا</button>
+          </div>
+        </div>
+
+        <footer>© <span id="year"></span> – Hilfe-Portal</footer>
+      </section>
+
+      <!-- THEMEN -->
+      <section id="topicsView" style="display:none;width:100%;max-width:980px;">
+        <div class="topbar">
+          <button id="backBtn" class="link-back">← Zurück</button>
+          <h2 id="topicsTitle" style="margin:0;font-size:20px;font-weight:600;"></h2>
+          <div style="width:48px;"></div>
+        </div>
+
+        <div class="topics-wrap" id="topicsWrap"></div>
+
+        <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">
+          Wähle ein Thema, um mehr zu erfahren
+        </footer>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div id="modalBox" class="modal">
+      <button id="closeModal" class="modal-close">✕</button>
+      <h3 id="modalTitle"></h3>
+      <div id="modalContent" style="margin-top:8px;"></div>
     </div>
-
-    <div class="cta" style="margin-top:14px;" dir="rtl">
-      <p style="direction:rtl;margin-bottom:8px;font-size:24px;">معلومات حول المركز باللغة <strong>العربية</strong؟ — اضغط هنا</p>
-      <button id="btn-ar" class="btn-circle">اضغط هنا</button>
-    </div>
   </div>
-
-  <footer>© <span id="year"></span> – Hilfe-Portal</footer>
-</section>
-
-<!-- THEMEN -->
-<section id="topicsView" style="display:none;width:100%;max-width:980px;">
-  <div class="topbar">
-    <button id="backBtn" class="link-back">← Zurück</button>
-    <h2 id="topicsTitle" style="margin:0;font-size:20px;font-weight:600;"></h2>
-    <div style="width:48px;"></div>
-  </div>
-
-  <div class="topics-wrap" id="topicsWrap"></div>
-
-  <footer style="text-align:center;margin-top:12px;color:rgba(255,255,255,0.6);font-size:13px;">
-    Wähle ein Thema, um mehr zu erfahren
-  </footer>
-</section>
-
-</main>
-</div>
-
-<!-- MODAL -->
-<div id="modalOverlay" class="modal-overlay">
-  <div id="modalBox" class="modal">
-    <button id="closeModal" class="modal-close">✕</button>
-    <h3 id="modalTitle"></h3>
-    <div id="modalContent" style="margin-top:8px;"></div>
-  </div>
-</div>
-
-</div>
 
 <script>
-/* --- THEMEN-DATEN --- */
+/* --- Daten --- */
 const topics = [
   {
     id:1,
@@ -206,7 +187,6 @@ const topics = [
     arInfo:"البريد الإلكتروني: info@iz-stuttgart.de" }
 ];
 
-/* Shortcuts */
 const homeView = document.getElementById('homeView');
 const topicsView = document.getElementById('topicsView');
 const topicsWrap = document.getElementById('topicsWrap');
@@ -224,7 +204,7 @@ const closeModal = document.getElementById('closeModal');
 let currentLang = null;
 yearSpan.textContent = new Date().getFullYear();
 
-/* --- Button Events --- */
+/* --- Buttons --- */
 btnDe.addEventListener('click', () => openTopics('de'));
 btnAr.addEventListener('click', () => openTopics('ar'));
 
@@ -237,7 +217,7 @@ backBtn.addEventListener('click', () => {
   topicsWrap.innerHTML = '';
 });
 
-/* --- MODAL --- */
+/* --- Modal handling --- */
 function openModal(topic) {
   const isAR = currentLang === 'ar';
   modalTitle.textContent = isAR ? topic.arTitle : topic.deTitle;
@@ -246,32 +226,32 @@ function openModal(topic) {
     ? `<div dir="rtl">${topic.arInfo}</div>`
     : `<div>${topic.deInfo}<br><br><strong>Haben Sie diese Unterlagen schon?</strong></div>`;
 
-  /* Nikah → Formular anhängen */
   if (!isAR && topic.id === 1) {
+    // Formular (Nikah)
     html += `
-      <form id="nikahForm" action="https://formsubmit.co/el/cijefo" method="POST" style="margin-top:18px; display:flex; flex-direction:column; gap:14px;">
+      <form id="nikahForm" action="https://formsubmit.co/el/cijefo" method="POST" style="margin-top:18px; display:flex; flex-direction:column; gap:12px;">
 
         <input type="hidden" name="_subject" value="Termin - Islamische Eheschließung">
         <input type="hidden" name="_captcha" value="false">
 
         <label>
           Name*:
-          <input type="text" name="Name" id="f_name" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+          <input type="text" name="Name" id="f_name" required >
         </label>
 
         <label>
           Email:
-          <input type="email" name="Email" id="f_email" style="width:100%;padding:8px;border-radius:6px;border:none;">
+          <input type="email" name="Email" id="f_email" >
         </label>
 
         <label>
           Telefonnummer:
-          <input type="text" name="Telefon" id="f_tel" style="width:100%;padding:8px;border-radius:6px;border:none;">
+          <input type="text" name="Telefon" id="f_tel" >
         </label>
 
         <label>
           Zeit bevorzugt*:
-          <select name="Zeit" id="f_time" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+          <select name="Zeit" id="f_time" required>
             <option value="">Bitte wählen</option>
             <option value="Vormittag">Vormittag</option>
             <option value="Nachmittag">Nachmittag</option>
@@ -281,7 +261,7 @@ function openModal(topic) {
 
         <label>
           Tag bevorzugt*:
-          <select name="Tag" id="f_day" required style="width:100%;padding:8px;border-radius:6px;border:none;">
+          <select name="Tag" id="f_day" required>
             <option value="">Bitte wählen</option>
             <option value="Montag">Montag</option>
             <option value="Dienstag">Dienstag</option>
@@ -296,7 +276,7 @@ function openModal(topic) {
 
         <label>
           Nachricht (optional):
-          <textarea name="Nachricht" style="width:100%;padding:8px;border-radius:6px;border:none;min-height:90px;"></textarea>
+          <textarea name="Nachricht" style="min-height:90px;"></textarea>
         </label>
 
         <button type="submit" style="padding:12px;border-radius:8px;border:none;background:#fff;color:#000;font-weight:700;cursor:pointer;">
@@ -304,40 +284,43 @@ function openModal(topic) {
         </button>
 
       </form>
-
-      <script>
-        document.getElementById('nikahForm').addEventListener('submit', function(e){
-          const name = document.getElementById('f_name').value.trim();
-          const email = document.getElementById('f_email').value.trim();
-          const tel = document.getElementById('f_tel').value.trim();
-          const time = document.getElementById('f_time').value;
-          const day = document.getElementById('f_day').value;
-
-          if(!name){
-            alert("Bitte Name eingeben.");
-            e.preventDefault(); return;
-          }
-          if(email === "" && tel === ""){
-            alert("Bitte Email ODER Telefonnummer eingeben.");
-            e.preventDefault(); return;
-          }
-          if(time === ""){
-            alert("Bitte bevorzugte Zeit wählen.");
-            e.preventDefault(); return;
-          }
-          if(day === ""){
-            alert("Bitte bevorzugten Tag wählen.");
-            e.preventDefault(); return;
-          }
-        });
-      <\/script>
     `;
   }
 
   modalContent.innerHTML = html;
-
   modalOverlay.style.display = 'flex';
   requestAnimationFrame(() => modalBox.classList.add('open'));
+
+  // Falls Nikah-Form vorhanden → attach validation
+  const nikahForm = document.getElementById('nikahForm');
+  if (nikahForm) {
+    nikahForm.addEventListener('submit', function(e){
+      const name = document.getElementById('f_name').value.trim();
+      const email = document.getElementById('f_email').value.trim();
+      const tel = document.getElementById('f_tel').value.trim();
+      const time = document.getElementById('f_time').value;
+      const day = document.getElementById('f_day').value;
+
+      if(!name){
+        alert("Bitte Name eingeben.");
+        e.preventDefault(); return;
+      }
+      if(email === "" && tel === ""){
+        alert("Bitte Email ODER Telefonnummer eingeben.");
+        e.preventDefault(); return;
+      }
+      if(time === ""){
+        alert("Bitte bevorzugte Zeit wählen.");
+        e.preventDefault(); return;
+      }
+      if(day === ""){
+        alert("Bitte bevorzugten Tag wählen.");
+        e.preventDefault(); return;
+      }
+
+      // Formular wird normal abgeschickt → formsubmit.co empfängt es
+    }, { once:true });
+  }
 }
 
 function closeModalIfOpen() {
@@ -356,7 +339,7 @@ modalOverlay.addEventListener('click', (e) => {
   if (e.target === modalOverlay) closeModalIfOpen();
 });
 
-/* --- TOPICS VIEW --- */
+/* --- Topics page --- */
 function openTopics(lang) {
   currentLang = lang;
 
@@ -376,21 +359,18 @@ function openTopics(lang) {
   renderTopicCircles();
 }
 
-/* --- RENDER CIRCLES --- */
+/* --- Render circles (simple, no rotation) --- */
 function renderTopicCircles() {
   topicsWrap.innerHTML = '';
 
-  const cw = topicsWrap.clientWidth;
-  const ch = topicsWrap.clientHeight;
-
-  const isLandscape = window.innerWidth > window.innerHeight;
-  const scaleBoost = isLandscape ? 1.8 : 1;
+  const cw = topicsWrap.clientWidth || 800;
+  const ch = topicsWrap.clientHeight || 480;
 
   const centerX = cw / 2;
   const centerY = ch / 2;
 
-  const radius = Math.min(cw, ch) * 0.44 * scaleBoost;
-  const circleSize = Math.min(cw, ch) * 0.33 * scaleBoost * 0.98;
+  const radius = Math.min(cw, ch) * 0.36;
+  const circleSize = Math.min(cw, ch) * 0.25;
 
   topics.forEach((t, i) => {
     const angle = (i / topics.length) * Math.PI * 2 - Math.PI / 2;
@@ -402,7 +382,7 @@ function renderTopicCircles() {
     btn.style.width = `${circleSize}px`;
     btn.style.height = `${circleSize}px`;
 
-    const fontModifier = currentLang === 'ar' ? 0.170 : 0.130;
+    const fontModifier = currentLang === 'ar' ? 0.16 : 0.12;
     btn.style.fontSize = (circleSize * fontModifier) + "px";
 
     btn.type = 'button';
@@ -421,67 +401,12 @@ function renderTopicCircles() {
   });
 }
 
-/* --- AUTO ROTATION --- */
-(function setupAutoRotation(){
-  const wrap = document.getElementById('rotateWrap');
-  const inner = document.getElementById('innerContainer');
-  if(!wrap || !inner) return;
-
-  function applyTransform(){
-    let angle = 0;
-    if (screen && screen.orientation && typeof screen.orientation.angle === 'number') {
-      angle = screen.orientation.angle;
-    } else if (typeof window.orientation === 'number') {
-      angle = window.orientation;
-    } else {
-      angle = (window.innerWidth >= window.innerHeight) ? 90 : 0;
-    }
-    angle = ((angle % 360) + 360) % 360;
-    const rotation = -angle;
-
-    inner.style.transform = 'none';
-    const box = inner.getBoundingClientRect();
-    const contentW = box.width || window.innerWidth;
-    const contentH = box.height || window.innerHeight;
-
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-
-    const is90 = (angle === 90 || angle === 270);
-    const neededW = is90 ? contentH : contentW;
-    const neededH = is90 ? contentW : contentH;
-
-    const scaleFit = Math.min(vw / neededW, vh / neededH, 1);
-
-    const EXTRA_FACTOR = 1.6;
-    const HARD_CAP = 1.6;
-    const finalScale = is90 ? Math.min(scaleFit * EXTRA_FACTOR, HARD_CAP) : scaleFit;
-
-    wrap.style.transform = `rotate(${rotation}deg) scale(${finalScale})`;
-    wrap.style.overflow = (finalScale > scaleFit) ? 'auto' : 'hidden';
-  }
-
-  let t=null;
-  function scheduleApply(){
-    clearTimeout(t);
-    t=setTimeout(applyTransform,80);
-  }
-
-  applyTransform();
-
-  window.addEventListener('orientationchange', scheduleApply, {passive:true});
-  window.addEventListener('resize', scheduleApply);
-
-  if (screen.orientation && screen.orientation.addEventListener) {
-    try { screen.orientation.addEventListener('change', scheduleApply); } catch(e){}
-  }
-})();
-
+/* --- Re-render on resize --- */
 window.addEventListener('resize', () => {
   clearTimeout(window._renderTopicTimeout);
   window._renderTopicTimeout = setTimeout(() => {
     if (currentLang) renderTopicCircles();
-  }, 240);
+  }, 180);
 });
 </script>
 
