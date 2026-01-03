@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="shared.css">
+  <script>
+    // Blocking script: immediately apply green background if coming from screensaver
+    // This runs before any CSS or content loads, preventing the "color pop"
+    if (sessionStorage.getItem('fromScreensaver')) {
+      document.documentElement.style.background = 'linear-gradient(-45deg, #1a5d48, #2d8a6c, #164e3c, #1a5d48)';
+      document.documentElement.style.backgroundSize = '400% 400%';
+      document.documentElement.style.transition = 'background 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+    }
+  </script>
+  <style>
+    /* Perfect seamless transition: body morphs from green to white */
+    body {
+      transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.from-green {
+      background: linear-gradient(-45deg, #1a5d48, #2d8a6c, #164e3c, #1a5d48) !important;
+      background-size: 400% 400% !important;
+      animation: gradientBG 15s ease infinite;
+    }
+    body.from-green.morph {
+      background: var(--bg) !important;
+      animation: none;
+    }
+    
+    /* Green overlay only needed for exit to screensaver */
+    .green-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(-45deg, #1a5d48, #2d8a6c, #164e3c, #1a5d48);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .green-overlay.active {
+      opacity: 1;
+    }
+    
+    /* White overlay for page-to-page transitions */
+    .white-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 99;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .white-overlay.active {
+      opacity: 1;
+    }
+    .white-overlay.entry {
+      opacity: 1;
+      transition: none;
+    }
+    .white-overlay.entry.reveal {
+      opacity: 0;
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    /* Content animation */
+    .content-wrapper {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .content-wrapper.hidden {
+      opacity: 0;
+      transform: translateY(10px) scale(0.99);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+    .content-wrapper.from-overlay {
+      /* Content is ready but hidden behind overlay */
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    
+    /* Staggered entry animation for content elements */
+    .content-wrapper.animate-in h1,
+    .content-wrapper.animate-in img,
+    .content-wrapper.animate-in .lang-card {
+      opacity: 0;
+      transform: translateY(30px) scale(0.97);
+      filter: blur(3px);
+    }
+    .content-wrapper.animate-in.start h1,
+    .content-wrapper.animate-in.start img,
+    .content-wrapper.animate-in.start .lang-card {
+      animation: slideUpFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .content-wrapper.animate-in.start h1 { animation-delay: 0s; }
+    .content-wrapper.animate-in.start img { animation-delay: 0.06s; }
+    .content-wrapper.animate-in.start .lang-card:first-of-type { animation-delay: 0.12s; }
+    .content-wrapper.animate-in.start .lang-card:last-of-type { animation-delay: 0.18s; }
+    
+    /* Prevent flash: if fromScreensaver flag exists, body starts green via inline style */
+    body.instant-green {
+      background: linear-gradient(-45deg, #1a5d48, #2d8a6c, #164e3c, #1a5d48) !important;
+      background-size: 400% 400% !important;
+    }
+    
+    @keyframes slideUpFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.97);
+        filter: blur(3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+    
+    /* Exit to screensaver - content dissolve */
+    .content-wrapper.exiting h1,
+    .content-wrapper.exiting img,
+    .content-wrapper.exiting .lang-card {
+      transition: opacity 0.3s ease, transform 0.35s ease, filter 0.3s ease;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      filter: blur(3px);
+    }
+    .content-wrapper.exiting .lang-card:last-of-type { transition-delay: 0s; }
+    .content-wrapper.exiting .lang-card:first-of-type { transition-delay: 0.05s; }
+    .content-wrapper.exiting img { transition-delay: 0.1s; }
+    .content-wrapper.exiting h1 { transition-delay: 0.15s; }
+  </style>
+</head>
+<body>
+  <div class="green-overlay" id="greenOverlay"></div>
+  <div class="white-overlay" id="whiteOverlay"></div>
+  <div class="container content-wrapper" id="content" style="justify-content: center; align-items: center;">
+    <div class="container" style="justify-content: center; align-items: center; padding-top: 15px;">
+      <h1 style="font-size: 48px; margin-bottom: 60px; color: var(--primary); text-align: center;">
+        Assalamu alaykum<br>السلام عليكم
+      </h1>
+
+    <img src="./assets/IZS_Logo.png" alt="Logo" style="width: 300px; margin-bottom: 40px;">
+    
+    <div style="display: flex; gap: 40px;">
+      <a href="portal.html?lang=de" class="lang-card" onclick="navigateTo(event, this.href)">
+        <div style="font-size: 100px; margin-bottom: 20px;">🇩🇪</div>
+        <h2 style="font-size: 40px; margin: 0;">Deutsch</h2>
+        <p style="color: var(--text-muted); font-size: 22px;">Weiter auf Deutsch</p>
+      </a>
+
+      <a href="portal.html?lang=ar" class="lang-card" onclick="navigateTo(event, this.href)">
+        <div style="font-size: 100px; margin-bottom: 20px;">AR</div>
+        <h2 style="font-size: 40px; margin: 0;" dir="rtl">العربية</h2>
+        <p style="color: var(--text-muted); font-size: 22px;" dir="rtl">الاستمرار باللغة العربية</p>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    const greenOverlay = document.getElementById('greenOverlay');
+    const whiteOverlay = document.getElementById('whiteOverlay');
+    const content = document.getElementById('content');
+    
+    // Check if coming from screensaver (seamless green-to-white morph)
+    if (sessionStorage.getItem('fromScreensaver')) {
+      // Start with green background - content invisible
+      document.body.classList.add('from-green');
+      content.classList.add('animate-in');
+      sessionStorage.removeItem('fromScreensaver');
+      
+      // Tiny delay for page to fully render, then start synchronized morph
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // Transition html element's background to transparent (reveals body underneath)
+          document.documentElement.style.background = 'transparent';
+          // Background morphs green → white while content fades in
+          document.body.classList.add('morph');
+          content.classList.add('start');
+        });
+      });
+    }
+    // Check if coming from portal (use white reveal)
+    else if (sessionStorage.getItem('fromPage')) {
+      whiteOverlay.classList.add('entry');
+      sessionStorage.removeItem('fromPage');
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          whiteOverlay.classList.add('reveal');
+        });
+      });
+    }
+
+    // Smooth page navigation to portal (use white overlay)
+    function navigateTo(event, url) {
+      event.preventDefault();
+      sessionStorage.setItem('fromPage', 'true');
+      
+      whiteOverlay.classList.remove('entry', 'reveal');
+      whiteOverlay.classList.add('active');
+      
+      setTimeout(() => {
+        window.location.href = url;
+      }, 280);
+    }
+    
+    // Fade to green for screensaver (idle timeout)
+    function fadeToGreen() {
+      sessionStorage.setItem('fromTimeout', 'true');
+      
+      // Start content exit animation first
+      content.classList.add('exiting');
+      
+      // Then fade in green overlay
+      setTimeout(() => {
+        greenOverlay.classList.remove('entry', 'reveal');
+        greenOverlay.classList.add('active');
+      }, 100);
+      
+      // Navigate when fully covered
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 400);
+    }
+
+    let idle;
+    const resetTimer = () => { 
+      clearTimeout(idle); 
+      idle = setTimeout(() => {
+        fadeToGreen();
+      }, 60000); 
+    };
+    window.onclick = resetTimer;
+    resetTimer();
+  </script>
+</body>
+</html>
