@@ -33,8 +33,9 @@ A modern, touch-optimized kiosk application designed to provide visitors with qu
 ├── shared.css          # Global Styles & 800x1280 Layout Logic
 │
 └── /assets             # Media Folder
-    ├── IZS_Logo.png    # Official Center Logo
-    ├── QR_Nikah.png    # QR code for marriage inquiries
+    ├── IZS_Logo.png       # Official Center Logo (dark)
+    ├── IZS_Logo_White.png # Official Center Logo (white, for screensaver)
+    ├── QR_Nikah.png       # QR code for marriage inquiries
     ├── QR_Telegram.png # QR code for Imam contact
     ├── QR_Apple.png    # App Store link
     └── QR_Android.png  # Play Store link
@@ -49,10 +50,10 @@ A modern, touch-optimized kiosk application designed to provide visitors with qu
 
 1. **Transfer Files:** Copy the entire project folder to the tablet's internal storage.
 2. **Set Start URL:** Open Fully Kiosk settings and set the Start URL to the local path of `index.html` (e.g., `file:///sdcard/izs-kiosk/index.html`).
-3. **Lockdown:** \* Enable **Kiosk Mode** to prevent users from exiting.
-
-- Disable **Status Bar** and **Navigation Bar** for a full-screen experience.
-- Set **Auto-Reload on Idle** to 60 seconds (optional, as the internal script handles this as well).
+3. **Lockdown:**
+   - Enable **Kiosk Mode** to prevent users from exiting.
+   - Disable **Status Bar** and **Navigation Bar** for a full-screen experience.
+   - Set **Auto-Reload on Idle** to 60 seconds (optional, as the internal script handles this as well).
 
 #### Using XOGO
 
