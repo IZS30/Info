@@ -311,8 +311,8 @@
       { 
         id: 6, 
         icon: "💬", 
-        deTitle: "Fragen an den Imam / Kontakt zur Moschee", 
-        arTitle: "أسئلة / تواصل مع الإمام", 
+        deTitle: "Kontakt zur Moschee /<br>Fragen an den Imam", 
+        arTitle: "\\\ التواصل مع المسجد<br>أسئلة إلى الإمام", 
         deInfo: "Kontakt telefonisch oder per E-Mail mit der Moschee aufnehmen:<br><strong style='color: var(--primary);'>+49 711 5590219 <br> info@iz-stuttgart.de</strong><br><br>" +
           "Fragen direkt an den Imam senden:<br>" +
           "<div style='display:flex; flex-direction:column; align-items:center;'>" +
@@ -325,7 +325,8 @@
           "<div style='display:flex; flex-direction:column; align-items:center;'>" +
             "<img src='./assets/QR_Telegram.png' class='qr-img'>" +
             "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>تليغرام</div>" +
-          "</div>"
+          "</div>" +
+          "<div style='margin-top:12px; background: #fff3cd; padding: 10px 16px; border-radius: 8px; font-size:20px; text-align:center;'> الرد على الأسئلة باللغة <strong>العربية</strong> فقط ⚠️</div>"
       }
     ];
 
@@ -342,7 +343,8 @@
       btn.className = 'topic-card';
       btn.innerHTML = `<span class="icon">${t.icon}</span><span class="label">${lang === 'ar' ? t.arTitle : t.deTitle}</span>`;
       btn.onclick = () => {
-        document.getElementById('mTitle').textContent = lang === 'ar' ? t.arTitle : t.deTitle;
+        // Use innerHTML so any HTML (e.g. <br>) in the title is rendered
+        document.getElementById('mTitle').innerHTML = lang === 'ar' ? t.arTitle : t.deTitle;
         document.getElementById('mBody').innerHTML = lang === 'ar' ? t.arInfo : t.deInfo;
         document.getElementById('mBody').className = lang === 'ar' ? 'rtl' : '';
         openModal();
