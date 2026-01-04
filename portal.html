@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      backdrop-filter: blur(10px); z-index: 100;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.show {
+      opacity: 1;
+    }
+    .modal-content {
+      background: white; width: 680px; border-radius: var(--radius);
+      padding: 50px; position: relative; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      transform: scale(0.8) translateY(30px);
+      opacity: 0;
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    }
+    .modal-overlay.show .modal-content {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    .modal-overlay.closing {
+      opacity: 0;
+    }
+    .modal-overlay.closing .modal-content {
+      transform: scale(0.9) translateY(20px);
+      opacity: 0;
+    }
+    .back-nav {
+      background: var(--primary-light); color: var(--primary);
+      border: none; padding: 18px 35px; border-radius: 50px;
+      font-weight: 700; text-decoration: none; font-size: 20px;
+    }
+    .qr-img { width: 240px; display: block; margin: 20px auto 4px auto; border: 1px solid #eee; border-radius: 12px; }
+    .store-badge { width: 200px; border-radius: 10px; }
+    
+    /* Green overlay for screensaver transition */
+    .green-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(-45deg, #1a5d48, #2d8a6c, #164e3c, #1a5d48);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .green-overlay.active {
+      opacity: 1;
+    }
+    /* Dissolve effect for exit to screensaver */
+    .green-overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .green-overlay.active::after {
+      opacity: 1;
+    }
+    /* Entry state: starts visible, will fade out with elegant reveal */
+    .green-overlay.entry {
+      opacity: 1;
+      transition: none;
+    }
+    .green-overlay.entry.reveal {
+      opacity: 0;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    /* White overlay for page-to-page transitions */
+    .white-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 199;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .white-overlay.active {
+      opacity: 1;
+    }
+    .white-overlay.entry {
+      opacity: 1;
+      transition: none;
+    }
+    .white-overlay.entry.reveal {
+      opacity: 0;
+      transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Content animation */
+    .content-wrapper {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .content-wrapper.hidden {
+      opacity: 0;
+      transform: translateY(10px) scale(0.99);
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+    }
+    
+    /* Exit to screensaver - content dissolve */
+    .content-wrapper.exiting .back-nav,
+    .content-wrapper.exiting img,
+    .content-wrapper.exiting .topic-card {
+      transition: opacity 0.3s ease, transform 0.35s ease, filter 0.3s ease;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      filter: blur(3px);
+    }
+    .content-wrapper.exiting .topic-card { transition-delay: 0s; }
+    .content-wrapper.exiting img { transition-delay: 0.05s; }
+    .content-wrapper.exiting .back-nav { transition-delay: 0.1s; }
+  </style>
+</head>
+<body>
+  <div class="green-overlay" id="greenOverlay"></div>
+  <div class="white-overlay" id="whiteOverlay"></div>
+  <div class="container content-wrapper" id="content" style="padding: 30px 50px 20px 50px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 70px;">
+      <a href="language.html" class="back-nav" onclick="navigateTo(event, this.href)">← Zurück / Back</a>
+      <img src="./assets/IZS_Logo.png" alt="Logo" style="height: 80px;">
+    </div>
+
+    <div id="grid" class="topics-grid"></div>
+  </div>
+
+  <div id="modal" class="modal-overlay" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h2 id="mTitle" style="color: var(--primary); font-size: 38px; margin-top:0; border-bottom: 2px solid var(--primary-light); padding-bottom: 15px;"></h2>
+      <div id="mBody" style="font-size: 26px; line-height: 1.6; margin-top: 25px;"></div>
+      <button onclick="closeModal()" 
+              style="margin-top: 40px; width: 100%; padding: 20px; border-radius: 15px; border: none; background: var(--primary); color: white; font-size: 22px; font-weight: 700;">
+        Schließen / Close
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // Smooth page navigation (back to language - use white overlay)
+    function navigateTo(event, url) {
+      event.preventDefault();
+      const whiteOverlay = document.getElementById('whiteOverlay');
+      sessionStorage.setItem('fromPage', 'true');
+      
+      whiteOverlay.classList.remove('entry', 'reveal');
+      whiteOverlay.classList.add('active');
+      
+      setTimeout(() => {
+        window.location.href = url;
+      }, 280);
+    }
+
+    // Check if coming from language page (use white reveal)
+    const overlay = document.getElementById('greenOverlay');
+    const whiteOverlay = document.getElementById('whiteOverlay');
+    const content = document.getElementById('content');
+    
+    if (sessionStorage.getItem('fromPage')) {
+      whiteOverlay.classList.add('entry');
+      sessionStorage.removeItem('fromPage');
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          whiteOverlay.classList.add('reveal');
+        });
+      });
+    }
+
+    // Modal functions
+    function openModal() {
+      const modal = document.getElementById('modal');
+      modal.style.display = 'flex';
+      // Trigger reflow for animation
+      modal.offsetHeight;
+      modal.classList.add('show');
+      modal.classList.remove('closing');
+    }
+    
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.add('closing');
+      modal.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('closing');
+      }, 300);
+    }
+
+    const topics = [
+      { 
+        id: 1, 
+        icon: "💍", 
+        deTitle: "Islamische Eheschließung (Nikah)", 
+        arTitle: "الزواج الإسلامي (النكاح)", 
+        deInfo: "Sie brauchen folgende Unterlagen:<br>" +
+          "1️⃣ Erweiterte Meldebescheinigung (vom Rathaus)<br>" +
+          "2️⃣ Kopie der Ausweise beider Partner<br><br>" +
+          "Termin per E-Mail vereinbaren:<br>" +
+          "<strong style='color: var(--primary);'>info@iz-stuttgart.de</strong><br>" +
+          "<span style='font-size:20px; opacity:0.8;'>(Bitte Kopie aller Dokumente beifügen)</span><br><br>" +
+          "Oder QR-Code scannen:<br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Nikah.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>E-Mail senden</div>" +
+          "</div>",
+        arInfo: "لإجراء عقد الزواج الإسلامي يجب إحضار:<br>" +
+          "1️⃣ شهادة السكن الموسعة<br><span style='font-size:20px; opacity:0.8;'>(Erweiterte Meldebescheinigung vom Rathaus)</span><br>" +
+          "2️⃣ نسخ من بطاقات الهوية لكلا الزوجين<br><br>" +
+          ":لترتيب موعد عبر البريد الإلكتروني<br>" +
+          "<strong style='color: var(--primary);'>info@iz-stuttgart.de</strong><br>" +
+          "<span style='font-size:20px; opacity:0.8;'>(الرجاء إرفاق نسخة من المستندات)</span><br><br>" +
+          ":QR أو امسح رمز الـ<br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Nikah.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>إرسال إيميل</div>" +
+          "</div>"
+      },
+            { 
+        id: 2, 
+        icon: "🕌", 
+        deTitle: "Gebetszeiten", 
+        arTitle: "مواقيت الصلاة", 
+        deInfo: "Wie viele Moscheen in Deutschland nutzen wir die Mawaqit App.<br><br>App ganz einfach herunterladen:<br>" +
+          "1️⃣ App über QR-Code herunterladen<br>" +
+          "2️⃣ Moschee auswählen: <strong style='color: var(--primary);'>Omar Ibn Al-Khattab (IZS) – Stuttgart</strong><br><br>" +
+          "<div style='display:flex; justify-content:center; gap:32px; margin-top:8px;'>" +
+            "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+              "<img src='./assets/QR_Apple.png' class='store-badge'>" +
+              "<div style='margin-top:4px; font-size:16px; opacity:0.8;'>App Store</div>" +
+            "</div>" +
+            "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+              "<img src='./assets/QR_Android.png' class='store-badge'>" +
+              "<div style='margin-top:4px; font-size:16px; opacity:0.8;'>Google Play</div>" +
+            "</div>" +
+          "</div>",
+        arInfo: "مثل العديد من المساجد في ألمانيا، نستخدم تطبيق Mawaqit.<br><br>:حمّل التطبيق بسهولة على هاتفك<br>" +
+          "1️⃣ حمّل التطبيق من خلال رمز الـ QR<br>" +
+          "2️⃣ :اختر المسجد<strong style='color: var(--primary);'>Omar Ibn Al-Khattab (IZS) – Stuttgart</strong><br><br>" +
+          "<div style='display:flex; justify-content:center; gap:32px; margin-top:8px;'>" +
+            "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+              "<img src='./assets/QR_Apple.png' class='store-badge'>" +
+              "<div style='margin-top:4px; font-size:16px; opacity:0.8;'>App Store</div>" +
+            "</div>" +
+            "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+              "<img src='./assets/QR_Android.png' class='store-badge'>" +
+              "<div style='margin-top:4px; font-size:16px; opacity:0.8;'>Google Play</div>" +
+            "</div>" +
+          "</div>"
+      },
+      { 
+        id: 3, 
+        icon: "🔤", 
+        deTitle: "Arabisch lernen für Kinder", 
+        arTitle: "تعليم اللغة العربية للأطفال", 
+        deInfo: "Anmeldung erforderlich.<br><br>Sie erreichen uns unter:<br><strong style='font-size:32px; color: var(--primary);'>0176 84425320</strong><br><span style='opacity:0.8;'>(WhatsApp)</span>", 
+        arInfo: ".التسجيل مطلوب<br><br>:للتواصل<br><strong style='font-size:32px; color: var(--primary);' dir='ltr'>0176 84425320</strong><br><span style='opacity:0.8;'>(WhatsApp)</span>" 
+      },
+      { 
+        id: 4, 
+        icon: "📖", 
+        deTitle: "Quran lernen für Kinder", 
+        arTitle: "تعليم القرآن الكريم للأطفال", 
+        deInfo: "Anmeldung erforderlich.<br><br>Sie erreichen uns unter:<br><strong style='font-size:32px; color: var(--primary);'>0171 6260309</strong><br><span style='opacity:0.8;'>(WhatsApp)</span>", 
+        arInfo: ".التسجيل مطلوب<br><br>:للتواصل<br><strong style='font-size:32px; color: var(--primary);' dir='ltr'>0171 6260309</strong><br><span style='opacity:0.8;'>(WhatsApp)</span>" 
+      },
+      { 
+        id: 5, 
+        icon: "🎤", 
+        deTitle: "Vorträge", 
+        arTitle: "محاضرات", 
+        deInfo: "<strong style='color: var(--primary);'>🗣️ Arabisch vom Imam:</strong><br>" +
+          "1. Freitag nach dem Maghreb Gebet<br>" +
+          "2. Samstag nach dem Maghreb Gebet<br>" +
+          "3. Sonntag nach dem Asr Gebet<br><br>" +
+          "<strong style='color: var(--primary);'>🗣️ Deutsch IZS Connect Jugendgruppe:</strong><br>" +
+          "• Sonntag um 13:00 Uhr<br><br>" +
+          "<strong style='color: var(--primary);'>📢 WhatsApp Kanal beitreten:</strong><br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Whatsapp_Channel.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>IZS Aktuell</div>" +
+          "</div>", 
+        arInfo: "<strong style='color: var(--primary);'>:محاضرات الإمام بالعربية 🗣️</strong><br>" +
+          "١. الجمعة بعد صلاة المغرب<br>" +
+          "٢. السبت بعد صلاة المغرب<br>" +
+          "٣. الأحد بعد صلاة العصر<br><br>" +
+          "<strong style='color: var(--primary);'>:IZS Connect محاضرات بالألمانية - مجموعة شباب 🗣️</strong><br>" +
+          "كل يوم أحد الساعة 13:00 •<br><br>" +
+          "<strong style='color: var(--primary);'>:انضم لقناة الواتساب 📢</strong><br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Whatsapp_Channel.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>IZS Aktuell</div>" +
+          "</div>" 
+      },
+      { 
+        id: 6, 
+        icon: "💬", 
+        deTitle: "Fragen an den Imam / Kontakt zur Moschee", 
+        arTitle: "أسئلة / تواصل مع الإمام", 
+        deInfo: "Kontakt telefonisch oder per E-Mail mit der Moschee aufnehmen:<br><strong style='color: var(--primary);'>+49 711 5590219 <br> info@iz-stuttgart.de</strong><br><br>" +
+          "Fragen direkt an den Imam senden:<br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Telegram.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>Telegram</div>" +
+          "</div>" +
+          "<div style='margin-top:12px; background: #fff3cd; padding: 10px 16px; border-radius: 8px; font-size:20px; text-align:center;'>⚠️ Nur Fragen auf <strong>Arabisch</strong> werden beantwortet</div>",
+        arInfo: ":التواصل مع المسجد هاتفيًا أو عبر البريد الإلكتروني<br><strong style='color: var(--primary);'>+49 711 5590219 <br> info@iz-stuttgart.de</strong><br><br>" +
+          ":للتواصل مع الإمام وإرسال الأسئلة<br>" +
+          "<div style='display:flex; flex-direction:column; align-items:center;'>" +
+            "<img src='./assets/QR_Telegram.png' class='qr-img'>" +
+            "<div style='margin-top:2px; font-size:18px; opacity:0.8;'>تليغرام</div>" +
+          "</div>"
+      }
+    ];
+
+    const params = new URLSearchParams(window.location.search);
+    const lang = params.get('lang') || 'de';
+    
+    if(lang === 'ar') {
+        document.getElementById('grid').classList.add('rtl');
+    }
+
+    const grid = document.getElementById('grid');
+    topics.forEach(t => {
+      const btn = document.createElement('div');
+      btn.className = 'topic-card';
+      btn.innerHTML = `<span class="icon">${t.icon}</span><span class="label">${lang === 'ar' ? t.arTitle : t.deTitle}</span>`;
+      btn.onclick = () => {
+        document.getElementById('mTitle').textContent = lang === 'ar' ? t.arTitle : t.deTitle;
+        document.getElementById('mBody').innerHTML = lang === 'ar' ? t.arInfo : t.deInfo;
+        document.getElementById('mBody').className = lang === 'ar' ? 'rtl' : '';
+        openModal();
+      };
+      grid.appendChild(btn);
+    });
+
+    const backButton = document.querySelector('.back-nav');
+    const closeButton = document.querySelector('#modal button');
+
+    if (lang === 'ar') {
+      backButton.textContent = '← العودة';
+      closeButton.textContent = 'إغلاق';
+      document.body.classList.add('rtl');
+    } else {
+      backButton.textContent = '← Zurück';
+      closeButton.textContent = 'Schließen';
+      document.body.classList.remove('rtl');
+    }
+
+    // Fade to green for screensaver
+    function fadeToGreen() {
+      const overlay = document.getElementById('greenOverlay');
+      const content = document.getElementById('content');
+      // Mark that we're coming from timeout
+      sessionStorage.setItem('fromTimeout', 'true');
+      
+      // Start content exit animation first
+      content.classList.add('exiting');
+      
+      // Then fade in green overlay
+      setTimeout(() => {
+        overlay.classList.remove('entry', 'reveal');
+        overlay.classList.add('active');
+      }, 150);
+      
+      // Navigate when fully covered
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 600);
+    }
+
+    let idle;
+    const resetTimer = () => { 
+      clearTimeout(idle); 
+      idle = setTimeout(() => {
+        fadeToGreen();
+      }, 60000); 
+    };
+    window.onclick = resetTimer;
+    resetTimer();
+  </script>
+</body>
+</html>
