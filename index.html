@@ -60,7 +60,11 @@
       opacity: 0;
       transform: translateY(30px) scale(0.95);
       filter: blur(4px);
-      animation: none !important; /* Disable pulse during entry */
+    }
+    /* Disable the older, global pulse only for the language lines during entry; keep click-hint animation available so it resumes after entry completes */
+    .screensaver-bg.entering .logo-main,
+    .screensaver-bg.entering .pulse-text {
+      animation: none;
     }
     .screensaver-bg.entering.animate .logo-main,
     .screensaver-bg.entering.animate .pulse-text,

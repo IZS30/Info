@@ -48,8 +48,24 @@ body {
 }
 
 .pulse-text {
-  animation: pulse 2.5s ease-in-out infinite;
+  animation: none; /* keep language lines still by default */
   font-size: 42px; font-weight: 700; margin: 20px;
+}
+
+/* Subtle call-to-action pulse for the click hint only */
+.click-hint {
+  animation: subtlePulse 4.5s ease-in-out infinite;
+  font-size: 24px; font-weight: 300;
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.92; transform: scale(0.995); }
+  50%    { opacity: 1;    transform: scale(1.01); }
+}
+
+/* Honor user preference to reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .click-hint, .pulse-text, .transition-overlay::before { animation: none !important; transition: none !important; }
 }
 
 @keyframes pulse {
