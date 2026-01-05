@@ -33,7 +33,7 @@ A modern, touch-optimized kiosk application designed to provide visitors with qu
 ├── shared.css          # Global Styles & 800x1280 Layout Logic
 │
 └── /assets             # Media Folder
-    ├── IZS_Logo.png       # Official Center Logo (dark)
+    ├── IZS_Logo_Black.png # Official Center Logo (dark)
     ├── IZS_Logo_White.png # Official Center Logo (white, for screensaver)
     ├── QR_Nikah.png       # QR code for marriage inquiries
     ├── QR_Telegram.png # QR code for Imam contact
