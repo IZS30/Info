@@ -249,8 +249,6 @@ body {
   box-shadow: 0 6px 20px 0 rgba(26,93,72,0.18);
   background: var(--primary-light);
 }
-  box-shadow: 0 4px 12px 0 rgba(26,93,72,0.13);
-}
 
 /* RTL Support */
 .rtl {
