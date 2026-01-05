@@ -204,7 +204,7 @@ body {
   z-index: 1;
 }
 .topic-card .label { position: relative; z-index: 1; }
-.topic-card:hover .icon { transform: scale(1.2) rotate(-8deg); }
+.topic-card:hover .icon { transform: scale(1.2) rotate(8deg); }
 .topic-card:active, .topic-card:focus {
   background: linear-gradient(135deg, var(--primary-light) 0%, rgba(232,243,239,1) 100%);
   transform: scale(0.94);
@@ -261,7 +261,7 @@ body {
 .rtl .topic-card {
   text-align: center;
 }
-.rtl .topic-card:hover .icon { transform: scale(1.15) rotate(5deg); }
+.rtl .topic-card:hover .icon { transform: scale(1.2) rotate(-8deg); }
 
 .rtl .lang-card {
   text-align: right;
